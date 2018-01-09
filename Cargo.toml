@@ -1,0 +1,6 @@
+[package]
+name = "rawsock"
+version = "0.1.0"
+authors = ["szymon.wieloch"]
+
+[dependencies]
