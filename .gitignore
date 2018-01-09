@@ -12,3 +12,8 @@ Cargo.lock
 /target/
 **/*.rs.bk
 Cargo.lock
+
+
+#ItelliJIdea files
+/.idea
+rust-rawsock.iml
