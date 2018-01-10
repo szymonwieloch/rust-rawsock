@@ -1,13 +1,14 @@
 use super::super::{RawSock, Interface};
-use super::dll::{PCapDll, PCapHandle, PCapPacketHeader};
+use super::dll::{PCapDll, PCapHandle, PCapPacketHeader, PCapInterface as RawInterface, SUCCESS, ERRBUF_SIZE};
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use std::ffi::{CStr, CString};
 use libc::{c_char, c_void, c_uint, c_int};
+//use core::array::FixedSizeArray;
 use std::mem::uninitialized;
+use std::ptr::null;
 
-const PCAP_ERRBUF_SIZE: usize = 256; //taken from header, is it platform independent?
-const PCAP_SUCCESS: c_int = 0;
+
 
 const POSSIBLE_NAMES: [&'static str; 10] = [
     //OSX
@@ -25,11 +26,43 @@ const POSSIBLE_NAMES: [&'static str; 10] = [
     "wpcap.dll"
 ];
 
-
-
 pub struct PCap {
     dll: Container<PCapDll>
 
+}
+
+#[derive(Debug)]
+pub enum Direction {
+    In, Out, InOut
+}
+
+///Wrapper around pcap error buffer
+pub struct PCapErrBuf {
+    buffer: [c_char; ERRBUF_SIZE]
+}
+
+impl PCapErrBuf{
+    pub fn as_string(&self) -> String {
+        unsafe{
+            CStr::from_ptr(self.buffer.as_ptr())
+        }.to_string_lossy().into_owned()
+    }
+
+    pub fn buffer(&mut self) -> * mut c_char {
+        self.buffer.as_mut_ptr()
+    }
+
+    pub fn new () -> PCapErrBuf {
+        PCapErrBuf {
+            buffer: [0; ERRBUF_SIZE] //TODO: can we optimize it be removing initialization?
+        }
+    }
+}
+
+pub struct Device {
+    pub name: String,
+    pub description: String,
+    pub direction: Direction
 }
 
 pub struct PCapInterface<'a> {
@@ -54,7 +87,7 @@ impl<'a> Drop for PCapInterface<'a> {
 
 impl<'a> Interface for PCapInterface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
-        if unsafe {self.dll.pcap_sendpacket(self.handle, packet.as_ptr(), packet.len() as c_int)} == PCAP_SUCCESS {
+        if unsafe {self.dll.pcap_sendpacket(self.handle, packet.as_ptr(), packet.len() as c_int)} == SUCCESS {
             Ok(())
         } else {
             let txt = unsafe {CStr::from_ptr(self.dll.pcap_geterr(self.handle))}.to_string_lossy().into_owned();
@@ -87,20 +120,38 @@ impl<'a> Interface for PCapInterface<'a> {
 impl PCap {
     pub fn open_interface(&self, name: &str) -> Result<PCapInterface, Error> {
         let name = CString::new(name)?;
-        let mut errbuf: [c_char; PCAP_ERRBUF_SIZE] = [0;PCAP_ERRBUF_SIZE];
+        let mut errbuf =  PCapErrBuf::new();
         let handle = unsafe { self.dll.pcap_open_live(
             name.as_ptr(),
             65536,                  /* max packet size */
             8,                      /* promiscuous mode */
             1000,                   /* read timeout in milliseconds */
-            errbuf.as_mut_ptr()
+            errbuf.buffer()
         )};
         if handle.is_null() {
-            let msg = unsafe {CStr::from_ptr(errbuf.as_ptr())}.to_string_lossy().into_owned();
-            Err(Error::OpeningInterface(msg))
+            Err(Error::OpeningInterface(errbuf.as_string()))
         } else {
             Ok(PCapInterface::new(handle, &self.dll))
         }
+    }
+
+    pub fn get_devices(&self) -> Result<Vec<Device>, Error> {
+        let mut interf: * const RawInterface = null();
+        let mut errbuf = PCapErrBuf::new();
+         if unsafe{self.dll.pcap_findalldevs(&interf, errbuf.buffer())} == SUCCESS {
+             let mut result: Vec<Device> = Vec::new();
+             while !interf.is_null() {
+                 result.push(Device{
+                     name: unsafe{CStr::from_ptr((*interf).name)}.to_string_lossy().into_owned(),
+                     description: unsafe{CStr::from_ptr((*interf).description)}.to_string_lossy().into_owned(),
+                     direction: Direction::In
+                 });
+                 interf = unsafe{&*interf}.next;
+             }
+             Ok(result)
+         } else {
+             Err(Error::GettingDeviceList(errbuf.as_string()))
+         }
     }
 }
 
