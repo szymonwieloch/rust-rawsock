@@ -12,6 +12,8 @@ extern crate libc;
 extern crate time;
 
 mod pcap;
+mod wpcap;
+mod pfring;
 mod err;
 mod common;
 

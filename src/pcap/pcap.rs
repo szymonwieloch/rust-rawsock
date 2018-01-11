@@ -3,14 +3,11 @@ use super::dll::{PCapDll, PCapHandle, PCapPacketHeader, PCapInterface as RawInte
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use std::ffi::{CStr, CString};
-use libc::{c_char, c_void, c_uint, c_int};
-//use core::array::FixedSizeArray;
+use libc::{c_char};
 use std::mem::uninitialized;
 use std::ptr::null;
-use std::marker::PhantomData;
-use std::slice::from_raw_parts;
-use time::Timespec;
 use super::interface::PCapInterface;
+use super::dev_iter::PCapDeviceIterator;
 
 
 
@@ -63,27 +60,12 @@ impl PCapErrBuf{
     }
 }
 
-impl PCap {
-    pub fn get_devices(&self) -> Result<Vec<Device>, Error> {
-        let mut interf: * const RawInterface = null();
-        let mut errbuf = PCapErrBuf::new();
-         if unsafe{self.dll.pcap_findalldevs(&interf, errbuf.buffer())} == SUCCESS {
-             let mut result: Vec<Device> = Vec::new();
-             while !interf.is_null() {
-                 result.push(Device{
-                     name: unsafe{CStr::from_ptr((*interf).name)}.to_string_lossy().into_owned(),
-                     description: unsafe{CStr::from_ptr((*interf).description)}.to_string_lossy().into_owned()
-                 });
-                 interf = unsafe{&*interf}.next;
-             }
-             Ok(result)
-         } else {
-             Err(Error::GettingDeviceList(errbuf.as_string()))
-         }
-    }
-}
 
-impl<'a> RawSock<'a, PCapInterface<'a>> for PCap {
+
+
+impl<'a> RawSock<'a> for PCap {
+    type Interf = PCapInterface<'a>;
+    type DeviceIterator = PCapDeviceIterator<'a>;
     fn default_locations() -> &'static [&'static str] {
         &POSSIBLE_NAMES
     }
@@ -109,5 +91,9 @@ impl<'a> RawSock<'a, PCapInterface<'a>> for PCap {
         } else {
             Ok(PCapInterface::new(handle, &self.dll))
         }
+    }
+
+    fn get_devices(&'a self) -> Result<Self::DeviceIterator, Error> {
+        PCapDeviceIterator::new(&self.dll)
     }
 }
