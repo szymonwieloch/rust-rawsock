@@ -1,5 +1,5 @@
-use super::super::{RawSock, Interface};
-use super::dll::{PCapDll, PCapHandle, PCapPacketHeader, PCapInterface as RawInterface, SUCCESS, ERRBUF_SIZE};
+use super::super::{RawSock, Interface, Packet, Device};
+use super::dll::{PCapDll, PCapHandle, PCapPacketHeader, PCapInterface as RawInterface, SUCCESS, ERRBUF_SIZE, PCapDirection as RawDirection};
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use std::ffi::{CStr, CString};
@@ -7,6 +7,10 @@ use libc::{c_char, c_void, c_uint, c_int};
 //use core::array::FixedSizeArray;
 use std::mem::uninitialized;
 use std::ptr::null;
+use std::marker::PhantomData;
+use std::slice::from_raw_parts;
+use time::Timespec;
+use super::interface::PCapInterface;
 
 
 
@@ -59,66 +63,38 @@ impl PCapErrBuf{
     }
 }
 
-pub struct Device {
-    pub name: String,
-    pub description: String,
-    pub direction: Direction
-}
-
-pub struct PCapInterface<'a> {
-    handle: * const PCapHandle,
-    dll: & 'a PCapDll
-}
-
-impl<'a> PCapInterface<'a> {
-    fn new(handle: * const PCapHandle, dll: &'a PCapDll) ->Self {
-        PCapInterface{
-            dll: dll,
-            handle: handle
-        }
-    }
-}
-
-impl<'a> Drop for PCapInterface<'a> {
-    fn drop(&mut self) {
-        unsafe { self.dll.pcap_close(self.handle) }
-    }
-}
-
-impl<'a> Interface for PCapInterface<'a> {
-    fn send(&self, packet: &[u8]) -> Result<(), Error> {
-        if unsafe {self.dll.pcap_sendpacket(self.handle, packet.as_ptr(), packet.len() as c_int)} == SUCCESS {
-            Ok(())
-        } else {
-            let txt = unsafe {CStr::from_ptr(self.dll.pcap_geterr(self.handle))}.to_string_lossy().into_owned();
-            Err(Error::SendingPacket(txt))
-        }
-    }
-
-    fn receive(&self) {
-        let mut header: PCapPacketHeader = unsafe {uninitialized()};
-        let data = unsafe { self.dll.pcap_next(self.handle, &mut header)};
-    }
-
-    fn flush(&self) {
-        unimplemented!()
-    }
-
-    fn get_ip(&self) {
-        unimplemented!()
-    }
-
-    fn get_mac(&self) {
-        unimplemented!()
-    }
-
-    fn get_default_gateway(&self) {
-        unimplemented!()
-    }
-}
-
 impl PCap {
-    pub fn open_interface(&self, name: &str) -> Result<PCapInterface, Error> {
+    pub fn get_devices(&self) -> Result<Vec<Device>, Error> {
+        let mut interf: * const RawInterface = null();
+        let mut errbuf = PCapErrBuf::new();
+         if unsafe{self.dll.pcap_findalldevs(&interf, errbuf.buffer())} == SUCCESS {
+             let mut result: Vec<Device> = Vec::new();
+             while !interf.is_null() {
+                 result.push(Device{
+                     name: unsafe{CStr::from_ptr((*interf).name)}.to_string_lossy().into_owned(),
+                     description: unsafe{CStr::from_ptr((*interf).description)}.to_string_lossy().into_owned()
+                 });
+                 interf = unsafe{&*interf}.next;
+             }
+             Ok(result)
+         } else {
+             Err(Error::GettingDeviceList(errbuf.as_string()))
+         }
+    }
+}
+
+impl<'a> RawSock<'a, PCapInterface<'a>> for PCap {
+    fn default_locations() -> &'static [&'static str] {
+        &POSSIBLE_NAMES
+    }
+    fn open(path: &str) -> Result<Self, Error> {
+        let dll: Container<PCapDll> = unsafe { Container::load(path)}?;
+        Ok(Self {
+            dll: dll
+        })
+    }
+
+    fn open_interface(&'a self, name: & str) -> Result<PCapInterface<'a>, Error>{
         let name = CString::new(name)?;
         let mut errbuf =  PCapErrBuf::new();
         let handle = unsafe { self.dll.pcap_open_live(
@@ -134,36 +110,4 @@ impl PCap {
             Ok(PCapInterface::new(handle, &self.dll))
         }
     }
-
-    pub fn get_devices(&self) -> Result<Vec<Device>, Error> {
-        let mut interf: * const RawInterface = null();
-        let mut errbuf = PCapErrBuf::new();
-         if unsafe{self.dll.pcap_findalldevs(&interf, errbuf.buffer())} == SUCCESS {
-             let mut result: Vec<Device> = Vec::new();
-             while !interf.is_null() {
-                 result.push(Device{
-                     name: unsafe{CStr::from_ptr((*interf).name)}.to_string_lossy().into_owned(),
-                     description: unsafe{CStr::from_ptr((*interf).description)}.to_string_lossy().into_owned(),
-                     direction: Direction::In
-                 });
-                 interf = unsafe{&*interf}.next;
-             }
-             Ok(result)
-         } else {
-             Err(Error::GettingDeviceList(errbuf.as_string()))
-         }
-    }
-}
-
-impl RawSock for PCap {
-    fn default_locations() -> &'static [&'static str] {
-        &POSSIBLE_NAMES
-    }
-    fn open(path: &str) -> Result<Self, Error> {
-        let dll: Container<PCapDll> = unsafe { Container::load(path)}?;
-        Ok(Self {
-            dll: dll
-        })
-    }
-
 }

@@ -22,20 +22,20 @@ pub struct PCapInterface {
 }
 #[repr(C)]
 pub struct PCapPacketHeader {
-    ts: PCapTimeVal,
-    caplen: c_uint,
-    len: c_uint,
+    pub ts: PCapTimeVal,
+    pub caplen: c_uint,
+    pub len: c_uint,
     #[cfg(target_os="macos")]
-    comment: [c_char; 256]
+    pub comment: [c_char; 256]
 }
 
 #[repr(C)]
 pub struct PCapTimeVal {
-    tv_sec: c_long,         /* seconds */
-    tv_usec: c_long        /* and microseconds */
+    pub tv_sec: c_long,         /* seconds */
+    pub tv_usec: c_long        /* and microseconds */
 }
 
-enum PCapDirection {
+pub enum PCapDirection {
     InOut    = 0,
     In       = 1,
     Out      = 2,

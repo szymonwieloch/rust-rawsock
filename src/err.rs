@@ -11,6 +11,7 @@ pub enum Error {
     /// character.
     NullCharacter(NulError),
     OpeningInterface(String),
+    ReceivingPacket(String),
     SendingPacket(String),
     GettingDeviceList(String)
 }
@@ -21,6 +22,7 @@ impl ErrorTrait for Error {
             Error::DllError(ref err) => err.description(),
             Error::NullCharacter(ref err) => err.description(),
             Error::OpeningInterface(ref txt) => txt,
+            Error::ReceivingPacket(ref txt) => txt,
             Error::SendingPacket(ref txt) => txt,
             Error::GettingDeviceList(ref txt) => txt
         }
@@ -33,6 +35,7 @@ impl Display for Error {
             Error::DllError(ref err) => err.fmt(f),
             Error::NullCharacter(ref err) => err.fmt(f),
             Error::OpeningInterface(ref txt)=> f.write_str(txt),
+            Error::ReceivingPacket(ref txt) => f.write_str(txt),
             Error::SendingPacket(ref txt) => f.write_str(txt),
             Error::GettingDeviceList(ref txt) => f.write_str(txt)
         }

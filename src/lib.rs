@@ -9,37 +9,20 @@ extern crate dlopen;
 #[macro_use]
 extern crate dlopen_derive;
 extern crate libc;
+extern crate time;
 
 mod pcap;
 mod err;
+mod common;
 
 pub use self::pcap::PCap;
 
+pub use self::common::{Packet, Interface, RawSock, Device, BorrowedPacket, OwnedPacket};
 pub use self::err::Error;
-use dlopen::Error as DlopenError;
-use std::io::{Error as IoError, ErrorKind as IoErrorKind};
 
-pub trait RawSock {
-    fn default_locations() -> &'static [&'static str];
-    fn open(path: &str) -> Result<Self, Error> where Self: Sized;
-    fn open_default_locations() -> Result<Self, Error> where Self: Sized {
-        let mut last_err = Error::DllError(DlopenError::OpeningLibraryError(IoError::new(IoErrorKind::Other, "No default locations")));
-        for path in Self::default_locations() {
-            match Self::open(path) {
-                Ok(rawsock) => return Ok(rawsock),
-                Err(err) => last_err = err
-            }
-        }
-        Err(last_err)
-    }
-    //fn open_interface<T>(& self, name: &str) -> T where T: Interface;
-}
 
-trait Interface {
-    fn send(&self, packet: &[u8]) -> Result<(), Error>;
-    fn receive(&self);
-    fn flush(&self);
-    fn get_ip(&self);
-    fn get_mac(&self);
-    fn get_default_gateway(&self);
-}
+
+
+
+
+
