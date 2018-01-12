@@ -15,15 +15,21 @@ pub struct Device {
     pub description: String
 }
 
+///Kind of data link - protocol used below the surface.
+#[derive(Debug, Copy, Clone)]
+pub enum DataLink{
+    Ethernet,
+    RawIp,
+    Other
+}
+
 
 
 pub trait Interface<'a>{
     fn send(&self, packet: &[u8]) -> Result<(), Error>;
     fn receive<'b>(&'b mut self) -> Result<BorrowedPacket<'b>, Error>;
     fn flush(&self);
-    fn get_ip(&self);
-    fn get_mac(&self);
-    fn get_default_gateway(&self);
+    fn data_link(&self) -> DataLink;
 }
 
 pub trait RawSock<'a>{

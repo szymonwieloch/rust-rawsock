@@ -13,13 +13,15 @@ extern crate time;
 
 mod pcap;
 mod wpcap;
+mod pcap_common;
 mod pfring;
 mod err;
 mod common;
 
-pub use self::pcap::PCap;
+pub use self::pcap::{PCap, PCapDeviceIterator, PCapInterface};
+pub use self::wpcap::{WPCap, WPCapDeviceIterator, WPCapInterface};
 
-pub use self::common::{Packet, Interface, RawSock, Device, BorrowedPacket, OwnedPacket};
+pub use self::common::{Packet, Interface, RawSock, Device, BorrowedPacket, OwnedPacket, DataLink};
 pub use self::err::Error;
 
 

@@ -1,20 +1,23 @@
 use std::ffi::{CStr, CString};
 use super::super::{Error,  BorrowedPacket, Interface, DataLink};
-use super::dll::{PCapHandle, PCapDll, SUCCESS, PCapPacketHeader, PCapErrBuf};
-use libc::{ c_int};
+use super::dll::{PCapHandle, WPCapDll, SUCCESS, PCapPacketHeader, PCapErrBuf, PCapSendQueue};
+use libc::{ c_int, c_uint};
 use std::mem::uninitialized;
 use time::Timespec;
 use std::slice::from_raw_parts;
 
-pub struct PCapInterface<'a> {
+const QUEUE_SIZE: usize = 65536 * 8; //min 8 packets
+
+pub struct WPCapInterface<'a> {
     handle: * const PCapHandle,
-    dll: & 'a PCapDll,
-    datalink: DataLink
+    dll: & 'a WPCapDll,
+    datalink: DataLink,
+    queue: * mut PCapSendQueue
 }
 
 
-impl<'a> PCapInterface<'a> {
-    pub fn new(name: &str, dll: &'a PCapDll) ->Result<Self, Error> {
+impl<'a> WPCapInterface<'a> {
+    pub fn new(name: &str, dll: &'a WPCapDll) ->Result<Self, Error> {
         let name = CString::new(name)?;
         let mut errbuf =  PCapErrBuf::new();
         let handle = unsafe { dll.pcap_open_live(
@@ -27,28 +30,47 @@ impl<'a> PCapInterface<'a> {
         if handle.is_null() {
             return Err(Error::OpeningInterface(errbuf.as_string()))
         }
+        let queue = unsafe{dll.pcap_sendqueue_alloc(QUEUE_SIZE as c_uint)};
+        assert!(!queue.is_null());
         let datalink = match unsafe{dll.pcap_datalink(handle)}{
             1 => DataLink::Ethernet,
             12 => DataLink::RawIp,
             _=> DataLink::Other
         };
 
-        Ok(PCapInterface{
+        Ok(WPCapInterface{
             dll,
+            queue,
             handle,
             datalink
         })
     }
 }
 
-impl<'a> Drop for PCapInterface<'a> {
+impl<'a> Drop for WPCapInterface<'a> {
     fn drop(&mut self) {
-        unsafe { self.dll.pcap_close(self.handle) }
+        unsafe {
+            self.dll.pcap_sendqueue_destroy(self.queue);
+            self.dll.pcap_close(self.handle)
+        }
     }
 }
 
-impl<'a> Interface<'a> for PCapInterface<'a> {
+impl<'a> Interface<'a> for WPCapInterface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
+        let header = PCapPacketHeader {
+            len: packet.len() as c_uint,
+            caplen: packet.len() as c_uint,
+            ts: unsafe{uninitialized()}
+        };
+
+        let err = unsafe{self.dll.pcap_sendqueue_queue(self.queue, &header, packet.as_ptr())};
+        if err != 0 {
+            self.flush();
+            let err = unsafe {self.dll.pcap_sendqueue_queue(self.queue, &header, packet.as_ptr())};
+            assert_eq!(err,0);
+        }
+
         if unsafe {self.dll.pcap_sendpacket(self.handle, packet.as_ptr(), packet.len() as c_int)} == SUCCESS {
             Ok(())
         } else {
@@ -62,7 +84,7 @@ impl<'a> Interface<'a> for PCapInterface<'a> {
         //TODO: replace pcap_next with pcap_next_ex to obtain more error information
         let data = unsafe { self.dll.pcap_next(self.handle, &mut header)};
         if data.is_null() {
-                Err(Error::ReceivingPacket("Unknown error when obtaining packet".into()))
+            Err(Error::ReceivingPacket("Unknown error when obtaining packet".into()))
         } else {
             Ok(
                 unsafe {
@@ -72,7 +94,15 @@ impl<'a> Interface<'a> for PCapInterface<'a> {
     }
 
     fn flush(&self) {
-        //pcap does not flush its packets - ignore
+        unsafe {
+            self.dll.pcap_sendqueue_transmit(self.handle, self.queue, 0);
+            /*
+            Those calls are reported by masscan code to be necessary
+            although I can't find any reason for that. For now disabled.
+            self.dll.pcap_sendqueue_destroy(self.queue);
+            self.queue = self.dll.pcap_sendqueue_alloc(QUEUE_SIZE as c_uint);
+            */
+        }
     }
 
     fn data_link(&self) -> DataLink {

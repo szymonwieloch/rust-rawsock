@@ -1,17 +1,17 @@
-use super::dll::{PCapDll, SUCCESS, PCapInterface, PCapErrBuf};
+use super::dll::{WPCapDll, SUCCESS, PCapInterface, PCapErrBuf};
 use super::super::Error;
 use std::ffi::CStr;
 use std::ptr::null;
 use Device;
 
-pub struct PCapDeviceIterator<'a>{
+pub struct WPCapDeviceIterator<'a>{
     first: * const PCapInterface,
     current: * const PCapInterface,
-    dll: &'a PCapDll
+    dll: &'a WPCapDll
 }
 
-impl<'a> PCapDeviceIterator<'a> {
-    pub fn new(dll: &'a PCapDll) -> Result<Self, Error> {
+impl<'a> WPCapDeviceIterator<'a> {
+    pub fn new(dll: &'a WPCapDll) -> Result<Self, Error> {
         let mut interf: * const PCapInterface = null();
         let mut errbuf = PCapErrBuf::new();
         if unsafe{dll.pcap_findalldevs(&interf, errbuf.buffer())} == SUCCESS {
@@ -26,7 +26,7 @@ impl<'a> PCapDeviceIterator<'a> {
     }
 }
 
-impl<'a> Iterator for PCapDeviceIterator<'a>{
+impl<'a> Iterator for WPCapDeviceIterator<'a>{
     type Item = Device;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -43,7 +43,7 @@ impl<'a> Iterator for PCapDeviceIterator<'a>{
     }
 }
 
-impl<'a> Drop for PCapDeviceIterator<'a>{
+impl<'a> Drop for WPCapDeviceIterator<'a>{
     fn drop(&mut self) {
         unsafe{self.dll.pcap_freealldevs(self.first)}
     }
