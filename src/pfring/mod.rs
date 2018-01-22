@@ -1,4 +1,6 @@
 mod dll;
-mod dev_iter;
 mod interface;
 mod pfring;
+
+pub use self::interface::PFRingInterface;
+pub use self::pfring::PFRing;

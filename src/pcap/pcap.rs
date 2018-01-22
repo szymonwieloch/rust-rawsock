@@ -1,8 +1,7 @@
-use super::super::{RawSock, Interface, Packet, Device, DataLink};
+use super::super::{RawSock};
 use super::dll::{PCapDll, PCapErrBuf};
 use dlopen::wrapper::Container;
 use super::super::err::Error;
-use std::ffi::{CStr, CString};
 use libc::{c_char};
 use super::interface::PCapInterface;
 use super::dev_iter::PCapDeviceIterator;
@@ -32,7 +31,6 @@ pub struct PCap {
 
 impl<'a> RawSock<'a> for PCap {
     type Interf = PCapInterface<'a>;
-    type DeviceIterator = PCapDeviceIterator<'a>;
     fn default_locations() -> &'static [&'static str] {
         &POSSIBLE_NAMES
     }
@@ -46,8 +44,11 @@ impl<'a> RawSock<'a> for PCap {
     fn open_interface(&'a self, name: & str) -> Result<PCapInterface<'a>, Error>{
        PCapInterface::new(name, &self.dll)
     }
+}
 
-    fn get_devices(&'a self) -> Result<Self::DeviceIterator, Error> {
+impl PCap {
+    pub fn get_devices<'a>(&'a self) -> Result<PCapDeviceIterator, Error> {
         PCapDeviceIterator::new(&self.dll)
     }
 }
+

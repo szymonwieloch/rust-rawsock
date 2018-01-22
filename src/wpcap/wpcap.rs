@@ -22,7 +22,6 @@ pub struct WPCap {
 
 impl<'a> RawSock<'a> for WPCap {
     type Interf = WPCapInterface<'a>;
-    type DeviceIterator = WPCapDeviceIterator<'a>;
     fn default_locations() -> &'static [&'static str] {
         &POSSIBLE_NAMES
     }
@@ -36,8 +35,10 @@ impl<'a> RawSock<'a> for WPCap {
     fn open_interface(&'a self, name: & str) -> Result<WPCapInterface<'a>, Error>{
         WPCapInterface::new(name, &self.dll)
     }
+}
 
-    fn get_devices(&'a self) -> Result<Self::DeviceIterator, Error> {
+impl WPCap {
+    pub fn get_devices<'a>(&'a self) -> Result<WPCapDeviceIterator, Error> {
         WPCapDeviceIterator::new(&self.dll)
     }
 }

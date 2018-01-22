@@ -20,6 +20,7 @@ mod common;
 
 pub use self::pcap::{PCap, PCapDeviceIterator, PCapInterface};
 pub use self::wpcap::{WPCap, WPCapDeviceIterator, WPCapInterface};
+pub use self::pfring::{PFRing, PFRingInterface};
 
 pub use self::common::{Packet, Interface, RawSock, Device, BorrowedPacket, OwnedPacket, DataLink};
 pub use self::err::Error;

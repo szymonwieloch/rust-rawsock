@@ -34,7 +34,6 @@ pub trait Interface<'a>{
 
 pub trait RawSock<'a>{
     type Interf: Interface<'a>;
-    type DeviceIterator: Iterator<Item=Device>;
     fn default_locations() -> &'static [&'static str];
     fn open(path: &str) -> Result<Self, Error> where Self: Sized;
     fn open_default_locations() -> Result<Self, Error> where Self: Sized {
@@ -48,6 +47,4 @@ pub trait RawSock<'a>{
         Err(last_err)
     }
     fn open_interface(&'a self, name: &str) -> Result<Self::Interf, Error>;
-
-    fn get_devices(&'a self) -> Result<Self::DeviceIterator, Error>;
 }
