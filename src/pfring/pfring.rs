@@ -33,4 +33,12 @@ impl<'a> Library<'a> for PFRing {
     fn open_default_locations() -> Result<Self, Error> where Self: Sized {
         open_locations(&POSSIBLE_NAMES)
     }
+    fn version(&self) -> String {
+        let mut ver: u32 = 0;
+        unsafe{self.dll.pfring_version_noring(&mut ver)};
+        let major: u8 = (ver >>16) as u8;
+        let minor: u8 = (ver >> 8) as u8;
+        let release: u8 = ver as u8;
+        format!("{}.{}.{}", major, minor, release)
+    }
 }

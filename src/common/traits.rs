@@ -31,4 +31,7 @@ pub trait Library<'a>{
     /// Name depends on the platform, for example on linux this is a path to the file representing
     /// a device, on Windows this is a GUID of the device.
     fn open_interface(&'a self, name: &str) -> Result<Self::Interf, Error>;
+
+    ///Returns library version
+    fn version(&self) -> String;
 }

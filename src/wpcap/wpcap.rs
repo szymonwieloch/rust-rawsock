@@ -5,6 +5,7 @@ use super::super::err::Error;
 use super::interface::WPCapInterface;
 use super::dev_iter::WPCapDeviceDescriptionIterator;
 use common::open_locations;
+use std::ffi::CStr;
 
 
 
@@ -34,6 +35,9 @@ impl<'a> Library<'a> for WPCap {
     }
     fn open_default_locations() -> Result<Self, Error> where Self: Sized {
         open_locations(&POSSIBLE_NAMES)
+    }
+    fn version(&self) -> String {
+        unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned()
     }
 }
 

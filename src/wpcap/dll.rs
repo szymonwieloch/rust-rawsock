@@ -23,6 +23,7 @@ pub struct WPCapDll {
     //devices
     pcap_findalldevs: unsafe extern "C" fn(alldevsp: *const *const PCapInterface, errbuf: *const c_char) -> c_int,
     pcap_freealldevs: unsafe extern "C" fn(alldevs: *const PCapInterface),
+    pcap_lib_version: unsafe extern "C" fn() -> * const c_char,
 
     //wpcap specific
     pcap_sendqueue_destroy: unsafe extern "C" fn (queue: * mut PCapSendQueue),

@@ -55,6 +55,13 @@ impl<'a> Library<'a> for RawLib{
             }
         }
     }
+    fn version(&self) -> String {
+        match *self {
+            RawLib::PFRing(ref pfring) => pfring.version(),
+            RawLib::WPCap(ref wpcap) => wpcap.version(),
+            RawLib::PCap(ref pcap) => pcap.version()
+        }
+    }
 }
 
 pub enum RawInterf<'a> {

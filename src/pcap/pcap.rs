@@ -5,6 +5,7 @@ use super::super::err::Error;
 use super::interface::PCapInterface;
 use super::dev_iter::PCapInterfaceDescriptionIterator;
 use common::open_locations;
+use std::ffi::CStr;
 
 
 //Different platforms have different locations:
@@ -50,6 +51,9 @@ impl<'a> Library<'a> for PCap {
 
     fn open_interface(&'a self, name: & str) -> Result<PCapInterface<'a>, Error>{
        PCapInterface::new(name, &self.dll)
+    }
+    fn version(&self) -> String {
+        unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned()
     }
 }
 
