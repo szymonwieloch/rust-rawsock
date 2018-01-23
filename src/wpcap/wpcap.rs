@@ -1,4 +1,4 @@
-use super::super::{RawSock, Interface, Packet, Device, DataLink};
+use super::super::{Library, Interface, Packet, InterfaceDescription, DataLink};
 use super::dll::{WPCapDll, PCapErrBuf};
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -6,6 +6,7 @@ use std::ffi::{CStr, CString};
 use libc::{c_char};
 use super::interface::WPCapInterface;
 use super::dev_iter::WPCapDeviceIterator;
+use common::open_locations;
 
 
 
@@ -20,11 +21,9 @@ pub struct WPCap {
     dll: Container<WPCapDll>
 }
 
-impl<'a> RawSock<'a> for WPCap {
+impl<'a> Library<'a> for WPCap {
     type Interf = WPCapInterface<'a>;
-    fn default_locations() -> &'static [&'static str] {
-        &POSSIBLE_NAMES
-    }
+
     fn open(path: &str) -> Result<Self, Error> {
         let dll: Container<WPCapDll> = unsafe { Container::load(path)}?;
         Ok(Self {
@@ -34,6 +33,9 @@ impl<'a> RawSock<'a> for WPCap {
 
     fn open_interface(&'a self, name: & str) -> Result<WPCapInterface<'a>, Error>{
         WPCapInterface::new(name, &self.dll)
+    }
+    fn open_default_locations() -> Result<Self, Error> where Self: Sized {
+        open_locations(&POSSIBLE_NAMES)
     }
 }
 

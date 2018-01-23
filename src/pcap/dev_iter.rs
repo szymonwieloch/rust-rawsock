@@ -2,15 +2,15 @@ use super::dll::{PCapDll, SUCCESS, PCapInterface, PCapErrBuf};
 use super::super::Error;
 use std::ffi::CStr;
 use std::ptr::null;
-use Device;
+use InterfaceDescription;
 
-pub struct PCapDeviceIterator<'a>{
+pub struct PCapInterfaceDescriptionIterator<'a>{
     first: * const PCapInterface,
     current: * const PCapInterface,
     dll: &'a PCapDll
 }
 
-impl<'a> PCapDeviceIterator<'a> {
+impl<'a> PCapInterfaceDescriptionIterator<'a> {
     pub fn new(dll: &'a PCapDll) -> Result<Self, Error> {
         let mut interf: * const PCapInterface = null();
         let mut errbuf = PCapErrBuf::new();
@@ -21,13 +21,13 @@ impl<'a> PCapDeviceIterator<'a> {
                 first: interf
             })
         } else {
-            Err(Error::GettingDeviceList(errbuf.as_string()))
+            Err(Error::GettingDeviceDescriptionList(errbuf.as_string()))
         }
     }
 }
 
-impl<'a> Iterator for PCapDeviceIterator<'a>{
-    type Item = Device;
+impl<'a> Iterator for PCapInterfaceDescriptionIterator<'a>{
+    type Item = InterfaceDescription;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.current.is_null(){
@@ -35,7 +35,7 @@ impl<'a> Iterator for PCapDeviceIterator<'a>{
         } else {
             let tmp = self.current;
             self.current = unsafe { &*self.current }.next;
-            Some(Device{
+            Some(InterfaceDescription {
                 name: unsafe{CStr::from_ptr((*tmp).name)}.to_string_lossy().into_owned(),
                 description: unsafe{CStr::from_ptr((*tmp).description)}.to_string_lossy().into_owned()
             })
@@ -43,7 +43,7 @@ impl<'a> Iterator for PCapDeviceIterator<'a>{
     }
 }
 
-impl<'a> Drop for PCapDeviceIterator<'a>{
+impl<'a> Drop for PCapInterfaceDescriptionIterator<'a>{
     fn drop(&mut self) {
         unsafe{self.dll.pcap_freealldevs(self.first)}
     }

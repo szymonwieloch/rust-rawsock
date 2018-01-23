@@ -7,6 +7,7 @@ use dlopen::wrapper::WrapperApi;
 use libc::{c_char, c_void, c_uint, c_int, c_long};
 pub use super::super::pcap_common::{PCapErrBuf, SUCCESS, PCapHandle, PCapPacketHeader, PCapTimeVal, PCapInterface};
 
+///Dynamic link library interface for pcap.so
 #[derive(WrapperApi)]
 pub struct PCapDll{
     pcap_open_live: unsafe extern "C" fn(devicename: *const c_char, snap_length:c_uint,

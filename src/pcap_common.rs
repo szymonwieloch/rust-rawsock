@@ -51,9 +51,9 @@ pub struct PCapTimeVal {
     pub tv_sec: c_long,         /* seconds */
     pub tv_usec: c_long        /* and microseconds */
 }
-
+/* probably this his not needed
 pub enum PCapDirection {
     InOut    = 0,
     In       = 1,
     Out      = 2,
-}
+}*/

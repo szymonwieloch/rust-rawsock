@@ -13,7 +13,7 @@ pub enum Error {
     OpeningInterface(String),
     ReceivingPacket(String),
     SendingPacket(String),
-    GettingDeviceList(String)
+    GettingDeviceDescriptionList(String)
 }
 
 impl ErrorTrait for Error {
@@ -24,7 +24,7 @@ impl ErrorTrait for Error {
             Error::OpeningInterface(ref txt) => txt,
             Error::ReceivingPacket(ref txt) => txt,
             Error::SendingPacket(ref txt) => txt,
-            Error::GettingDeviceList(ref txt) => txt
+            Error::GettingDeviceDescriptionList(ref txt) => txt
         }
     }
 }
@@ -37,7 +37,7 @@ impl Display for Error {
             Error::OpeningInterface(ref txt)=> f.write_str(txt),
             Error::ReceivingPacket(ref txt) => f.write_str(txt),
             Error::SendingPacket(ref txt) => f.write_str(txt),
-            Error::GettingDeviceList(ref txt) => f.write_str(txt)
+            Error::GettingDeviceDescriptionList(ref txt) => f.write_str(txt)
         }
     }
 }

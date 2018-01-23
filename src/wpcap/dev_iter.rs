@@ -2,7 +2,7 @@ use super::dll::{WPCapDll, SUCCESS, PCapInterface, PCapErrBuf};
 use super::super::Error;
 use std::ffi::CStr;
 use std::ptr::null;
-use Device;
+use InterfaceDescription;
 
 pub struct WPCapDeviceIterator<'a>{
     first: * const PCapInterface,
@@ -21,13 +21,13 @@ impl<'a> WPCapDeviceIterator<'a> {
                 first: interf
             })
         } else {
-            Err(Error::GettingDeviceList(errbuf.as_string()))
+            Err(Error::GettingDeviceDescriptionList(errbuf.as_string()))
         }
     }
 }
 
 impl<'a> Iterator for WPCapDeviceIterator<'a>{
-    type Item = Device;
+    type Item = InterfaceDescription;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.current.is_null(){
@@ -35,7 +35,7 @@ impl<'a> Iterator for WPCapDeviceIterator<'a>{
         } else {
             let tmp = self.current;
             self.current = unsafe { &*self.current }.next;
-            Some(Device{
+            Some(InterfaceDescription {
                 name: unsafe{CStr::from_ptr((*tmp).name)}.to_string_lossy().into_owned(),
                 description: unsafe{CStr::from_ptr((*tmp).description)}.to_string_lossy().into_owned()
             })

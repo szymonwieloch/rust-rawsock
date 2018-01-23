@@ -18,11 +18,11 @@ mod pfring;
 mod err;
 mod common;
 
-pub use self::pcap::{PCap, PCapDeviceIterator, PCapInterface};
+pub use self::pcap::{PCap, PCapInterfaceDescriptionIterator, PCapInterface};
 pub use self::wpcap::{WPCap, WPCapDeviceIterator, WPCapInterface};
 pub use self::pfring::{PFRing, PFRingInterface};
 
-pub use self::common::{Packet, Interface, RawSock, Device, BorrowedPacket, OwnedPacket, DataLink};
+pub use self::common::{Packet, Interface, Library, InterfaceDescription, BorrowedPacket, OwnedPacket, DataLink, RawLib, RawInterf};
 pub use self::err::Error;
 
 

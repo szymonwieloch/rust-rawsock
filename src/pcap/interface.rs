@@ -6,6 +6,7 @@ use std::mem::uninitialized;
 use time::Timespec;
 use std::slice::from_raw_parts;
 
+///pcap version of interface.
 pub struct PCapInterface<'a> {
     handle: * const PCapHandle,
     dll: & 'a PCapDll,

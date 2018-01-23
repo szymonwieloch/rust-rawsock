@@ -1,10 +1,12 @@
-use super::super::{RawSock};
+use super::super::{Library};
 use super::dll::{PCapDll, PCapErrBuf};
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use libc::{c_char};
 use super::interface::PCapInterface;
-use super::dev_iter::PCapDeviceIterator;
+use super::dev_iter::PCapInterfaceDescriptionIterator;
+use dlopen::Error as DllError;
+use common::open_locations;
 
 
 
@@ -29,10 +31,10 @@ pub struct PCap {
 
 }
 
-impl<'a> RawSock<'a> for PCap {
+impl<'a> Library<'a> for PCap {
     type Interf = PCapInterface<'a>;
-    fn default_locations() -> &'static [&'static str] {
-        &POSSIBLE_NAMES
+    fn open_default_locations() -> Result<Self, Error> {
+        open_locations(&POSSIBLE_NAMES)
     }
     fn open(path: &str) -> Result<Self, Error> {
         let dll: Container<PCapDll> = unsafe { Container::load(path)}?;
@@ -47,8 +49,8 @@ impl<'a> RawSock<'a> for PCap {
 }
 
 impl PCap {
-    pub fn get_devices<'a>(&'a self) -> Result<PCapDeviceIterator, Error> {
-        PCapDeviceIterator::new(&self.dll)
+    pub fn get_devices<'a>(&'a self) -> Result<PCapInterfaceDescriptionIterator, Error> {
+        PCapInterfaceDescriptionIterator::new(&self.dll)
     }
 }
 

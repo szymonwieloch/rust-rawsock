@@ -25,9 +25,11 @@ impl<'a> BorrowedPacket<'a> {
             //_marker: PhantomData
         }
     }
+    ///Converts Borrowed packet into owned version.
     pub fn as_owned(&self) -> OwnedPacket {
         OwnedPacket::new(self.packet, self.when_received)
     }
+    ///Converts Borrowed packet into owned version.
     pub fn into_owned(self) -> OwnedPacket {
         OwnedPacket::new(self.packet, self.when_received)
     }
@@ -60,6 +62,7 @@ impl Packet for OwnedPacket{
 }
 
 impl OwnedPacket {
+    ///Creates owned packet from provided data.
     pub fn new (data: &[u8], when: Timespec) -> Self{
         OwnedPacket {
             packet: data.into(),
@@ -67,6 +70,7 @@ impl OwnedPacket {
         }
     }
 
+    ///Returns its borrowed version.
     pub fn as_borrowed(&self) -> BorrowedPacket {
         BorrowedPacket::new(self.when_received, &self.packet)
     }

@@ -5,4 +5,4 @@ mod interface;
 
 pub use self::pcap::PCap;
 pub use self::interface::PCapInterface;
-pub use self::dev_iter::PCapDeviceIterator;
+pub use self::dev_iter::PCapInterfaceDescriptionIterator;

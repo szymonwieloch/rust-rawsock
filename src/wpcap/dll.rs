@@ -2,12 +2,15 @@ use dlopen::wrapper::WrapperApi;
 use libc::{c_char, c_void, c_uint, c_int, c_long};
 pub use super::super::pcap_common::{PCapErrBuf, SUCCESS, PCapHandle, PCapPacketHeader, PCapTimeVal, PCapInterface};
 
+///Equivalent of C struct pcap_sendqueue_t
+#[repr(C)]
 pub struct PCapSendQueue{
     maxlen: c_uint,
     len: c_uint,
     buffer: * mut c_char
 }
 
+///Dynamic load library interface for wpcap.dll
 #[derive(WrapperApi)]
 pub struct WPCapDll {
     pcap_open_live: unsafe extern "C" fn(devicename: *const c_char, snap_length: c_uint,
