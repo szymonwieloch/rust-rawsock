@@ -4,7 +4,7 @@ This is basicly the equivalent of C language header.
 */
 
 use dlopen::wrapper::WrapperApi;
-use libc::{c_char, c_void, c_uint, c_int, c_long};
+use libc::{c_char, c_uint, c_int};
 pub use super::super::pcap_common::{PCapErrBuf, SUCCESS, PCapHandle, PCapPacketHeader, PCapTimeVal, PCapInterface};
 
 ///Dynamic link library interface for pcap.so

@@ -1,11 +1,9 @@
-use super::super::{Library, Interface, Packet, InterfaceDescription, DataLink};
-use super::dll::{WPCapDll, PCapErrBuf};
+use super::super::Library;
+use super::dll::WPCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
-use std::ffi::{CStr, CString};
-use libc::{c_char};
 use super::interface::WPCapInterface;
-use super::dev_iter::WPCapDeviceIterator;
+use super::dev_iter::WPCapDeviceDescriptionIterator;
 use common::open_locations;
 
 
@@ -40,7 +38,7 @@ impl<'a> Library<'a> for WPCap {
 }
 
 impl WPCap {
-    pub fn get_devices<'a>(&'a self) -> Result<WPCapDeviceIterator, Error> {
-        WPCapDeviceIterator::new(&self.dll)
+    pub fn get_devices<'a>(&'a self) -> Result<WPCapDeviceDescriptionIterator, Error> {
+        WPCapDeviceDescriptionIterator::new(&self.dll)
     }
 }

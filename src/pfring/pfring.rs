@@ -1,4 +1,4 @@
-use super::super::{Library, Interface, Packet, InterfaceDescription, DataLink};
+use super::super::Library;
 use super::interface::PFRingInterface;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -9,6 +9,7 @@ const POSSIBLE_NAMES: [&'static str; 1] = [
     "libpfring.so"
 ];
 
+///Instance of a opened pfring library.
 pub struct PFRing {
     dll: Container<PFRingDll>
 }

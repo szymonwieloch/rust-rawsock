@@ -9,8 +9,6 @@ pub use self::traits::{Library, Interface};
 use dlopen::Error as DlopenError;
 use std::io::{Error as IoError, ErrorKind as IoErrorKind};
 use super::err::Error;
-use std::iter::Iterator;
-
 
 ///Describes a network card device.
 #[derive(Debug)]

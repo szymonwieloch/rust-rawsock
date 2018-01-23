@@ -4,17 +4,17 @@ use std::ffi::CStr;
 use std::ptr::null;
 use InterfaceDescription;
 
-pub struct WPCapDeviceIterator<'a>{
+pub struct WPCapDeviceDescriptionIterator<'a>{
     first: * const PCapInterface,
     current: * const PCapInterface,
     dll: &'a WPCapDll
 }
 
-impl<'a> WPCapDeviceIterator<'a> {
+impl<'a> WPCapDeviceDescriptionIterator<'a> {
     pub fn new(dll: &'a WPCapDll) -> Result<Self, Error> {
         let mut interf: * const PCapInterface = null();
         let mut errbuf = PCapErrBuf::new();
-        if unsafe{dll.pcap_findalldevs(&interf, errbuf.buffer())} == SUCCESS {
+        if unsafe{dll.pcap_findalldevs(&mut interf, errbuf.buffer())} == SUCCESS {
             Ok(Self{
                 dll,
                 current: interf,
@@ -26,7 +26,7 @@ impl<'a> WPCapDeviceIterator<'a> {
     }
 }
 
-impl<'a> Iterator for WPCapDeviceIterator<'a>{
+impl<'a> Iterator for WPCapDeviceDescriptionIterator<'a>{
     type Item = InterfaceDescription;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -43,7 +43,7 @@ impl<'a> Iterator for WPCapDeviceIterator<'a>{
     }
 }
 
-impl<'a> Drop for WPCapDeviceIterator<'a>{
+impl<'a> Drop for WPCapDeviceDescriptionIterator<'a>{
     fn drop(&mut self) {
         unsafe{self.dll.pcap_freealldevs(self.first)}
     }

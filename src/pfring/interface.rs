@@ -7,6 +7,7 @@ use time::Timespec;
 use std::slice::from_raw_parts;
 use libc::c_uint;
 
+///pfring version of an interface.
 pub struct PFRingInterface<'a> {
     handle: * mut PFRing,
     dll: & 'a Container<PFRingDll>,

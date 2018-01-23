@@ -13,9 +13,9 @@ impl<'a> Library<'a> for RawLib{
         //The order is : PF Ring, WPCap, PCap
         match PFRing::open(path){
             Ok(val) => Ok(RawLib::PFRing(val)),
-            Err(err) => match WPCap::open(path) {
+            Err(..) => match WPCap::open(path) {
                 Ok(val) => Ok(RawLib::WPCap(val)),
-                Err(err) => match PCap::open(path) {
+                Err(..) => match PCap::open(path) {
                     Ok(val) => Ok(RawLib::PCap(val)),
                     //use the last error as a result for the whole call
                     Err(err) => Err(err)
@@ -45,9 +45,9 @@ impl<'a> Library<'a> for RawLib{
         //The order is : PF Ring, WPCap, PCap
         match PFRing::open_default_locations(){
             Ok(val) => Ok(RawLib::PFRing(val)),
-            Err(err) => match WPCap::open_default_locations(){
+            Err(..) => match WPCap::open_default_locations(){
                 Ok(val) => Ok(RawLib::WPCap(val)),
-                Err(err) => match PCap::open_default_locations() {
+                Err(..) => match PCap::open_default_locations() {
                     Ok(val) => Ok(RawLib::PCap(val)),
                     //use the last error as a result for the whole call
                     Err(err) => Err(err)

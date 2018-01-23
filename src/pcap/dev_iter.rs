@@ -4,6 +4,7 @@ use std::ffi::CStr;
 use std::ptr::null;
 use InterfaceDescription;
 
+///pcap iterator of device descriptions.
 pub struct PCapInterfaceDescriptionIterator<'a>{
     first: * const PCapInterface,
     current: * const PCapInterface,
@@ -14,7 +15,7 @@ impl<'a> PCapInterfaceDescriptionIterator<'a> {
     pub fn new(dll: &'a PCapDll) -> Result<Self, Error> {
         let mut interf: * const PCapInterface = null();
         let mut errbuf = PCapErrBuf::new();
-        if unsafe{dll.pcap_findalldevs(&interf, errbuf.buffer())} == SUCCESS {
+        if unsafe{dll.pcap_findalldevs(&mut interf, errbuf.buffer())} == SUCCESS {
             Ok(Self{
                 dll,
                 current: interf,

@@ -10,9 +10,13 @@ pub enum Error {
     ///Provided string could not be coverted into `std::ffi::CString` because it contained null
     /// character.
     NullCharacter(NulError),
+    ///The interface could not be opened.
     OpeningInterface(String),
+    ///Receiving raw packet failed.
     ReceivingPacket(String),
+    ///Sending raw packet failed.
     SendingPacket(String),
+    ///Obtaining device description list failed.
     GettingDeviceDescriptionList(String)
 }
 

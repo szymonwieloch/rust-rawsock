@@ -5,4 +5,4 @@ mod wpcap;
 
 pub use self::wpcap::WPCap;
 pub use self::interface::WPCapInterface;
-pub use self::dev_iter::WPCapDeviceIterator;
+pub use self::dev_iter::WPCapDeviceDescriptionIterator;

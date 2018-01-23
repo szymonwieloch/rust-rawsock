@@ -8,6 +8,7 @@ use std::slice::from_raw_parts;
 
 const QUEUE_SIZE: usize = 65536 * 8; //min 8 packets
 
+///wpcap specific Interface representation.
 pub struct WPCapInterface<'a> {
     handle: * const PCapHandle,
     dll: & 'a WPCapDll,
