@@ -1,5 +1,7 @@
 use {PCap, PCapInterface, WPCap, WPCapInterface, PFRing, PFRingInterface, Library, Interface, Error, BorrowedPacket, DataLink};
 
+///Wrapper over several library implementations that automatically chooses available library
+/// and hides the internal complexity of passing calls tot he right implementation.
 pub enum RawLib{
     PFRing(PFRing),
     PCap(PCap),
@@ -64,6 +66,20 @@ impl<'a> Library<'a> for RawLib{
     }
 }
 
+
+impl RawLib {
+    ///Returns library name plus library version
+    pub fn full_version(&self) -> String {
+        match *self{
+            RawLib::PCap(ref pcap) => format!("pcap {}", pcap.version()),
+            RawLib::WPCap(ref wpcap) => format!("wpcap {}", wpcap.version()),
+            RawLib::PFRing(ref pfring) => format!("pfring {}", pfring.version()),
+        }
+    }
+}
+
+///Wrapper over several library-specific interface implementations that hides the internal
+///complexity of passing calls tot he right implementation.
 pub enum RawInterf<'a> {
     PFRing(PFRingInterface<'a>),
     WPCap(WPCapInterface<'a>),

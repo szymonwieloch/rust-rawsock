@@ -24,10 +24,3 @@ pub use self::pfring::{PFRing, PFRingInterface};
 
 pub use self::common::{Packet, Interface, Library, InterfaceDescription, BorrowedPacket, OwnedPacket, DataLink, RawLib, RawInterf};
 pub use self::err::Error;
-
-
-
-
-
-
-
