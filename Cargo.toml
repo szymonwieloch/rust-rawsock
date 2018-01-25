@@ -2,12 +2,22 @@
 name = "rawsock"
 version = "0.1.0"
 authors = ["Szymon Wieloch <szymon.wieloch@gmail.com>"]
-description = "Library for receiving and sending raw packets using libraries such as pcap, wpcap, npcap and pf_ring. Provides a consistent API for all those libraries"
-keywords = [
-    #common functions
-    "packet", "socket", "pf_ring", "wpcap", "pcap"]
+description = "Library for receiving and sending raw packets. While most crate wrap just one library, rawsock allows you to use pcap, wpcap, npcap and pf_ring using a consistent API for all of them."
+keywords = ["packet", "socket", "pf_ring", "wpcap", "pcap"]
 license = "MIT"
 repository = "https://github.com/szymonwieloch/rust-rawsock"
+categories = ["network-programming"]
+
+[badges.travis-ci]
+repository = "szymonwieloch/rust-rawsock"
+branch = "master"
+
+[badges.appveyor]
+repository = "szymonwieloch/rust-rawsock"
+branch = "master"
+
+[badges.is-it-maintained-open-issues]
+repository = "szymonwieloch/rust-rawsock"
 
 [dependencies]
 dlopen = "0.1.3"
