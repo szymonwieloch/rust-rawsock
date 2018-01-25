@@ -2,7 +2,7 @@
 name = "rawsock"
 version = "0.1.0"
 authors = ["Szymon Wieloch <szymon.wieloch@gmail.com>"]
-description = "Library for receiving and sending raw packets using libraries such as pcap, wpcap, npcap and pf_ring."
+description = "Library for receiving and sending raw packets using libraries such as pcap, wpcap, npcap and pf_ring. Provides a consistent API for all those libraries"
 keywords = [
     #common functions
     "packet", "socket", "pf_ring", "wpcap", "pcap"]
