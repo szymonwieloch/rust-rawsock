@@ -67,7 +67,7 @@ impl<'a> Interface<'a> for PCapInterface<'a> {
         } else {
             Ok(
                 unsafe {
-                    BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, header.ts.tv_usec * 1000), from_raw_parts(data, header.caplen as usize))
+                    BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, (header.ts.tv_usec * 1000) as i32), from_raw_parts(data, header.caplen as usize))
                 })
         }
     }

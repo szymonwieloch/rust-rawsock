@@ -51,7 +51,7 @@ impl<'a> Interface<'a> for PFRingInterface<'a> {
             Err(Error::ReceivingPacket(String::from("Unknown Error")))
         } else {
             let packet = unsafe{from_raw_parts(buf, header.caplen as usize)};
-            Ok(BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, header.ts.tv_usec*1000), packet))
+            Ok(BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, (header.ts.tv_usec*1000) as i32), packet))
         }
     }
 
