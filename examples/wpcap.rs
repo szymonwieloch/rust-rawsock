@@ -18,6 +18,7 @@ fn main(){
     }
     {
         let packet1 = dev.receive().unwrap();
+        println!("Received packet: {:?}", packet1);
         //let packet2 = dev.receive().unwrap(); This won't compile because of mutable borrow
     }
 
