@@ -1,7 +1,6 @@
 mod packet;
 mod rawsock;
 mod traits;
-
 pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
 pub use self::rawsock::{RawInterf, RawLib};
 pub use self::traits::{Library, Interface};

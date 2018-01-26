@@ -3,8 +3,6 @@ use std::ops::Deref;
 
 ///Trait for obtained packets - common part between borrowed and owned versions.
 pub trait Packet : Deref<Target=[u8]>{
-    ///Returns content of the packet
-    fn data(&self) -> &[u8];
     ///Returns the time when this packet was received.
     fn when(&self) -> Timespec;
 }
@@ -45,9 +43,6 @@ impl<'a> Deref for BorrowedPacket<'a> {
 }
 
 impl<'a> Packet for BorrowedPacket<'a> {
-    fn data(&self) -> &[u8] {
-        self.packet
-    }
 
     fn when(&self) -> Timespec {
         self.when_received
@@ -61,9 +56,6 @@ pub struct OwnedPacket {
 }
 
 impl Packet for OwnedPacket{
-    fn data(&self) -> &[u8] {
-        &self.packet
-    }
 
     fn when(&self) -> Timespec {
         self.when_received
