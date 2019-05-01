@@ -11,6 +11,8 @@ pub enum RawLib{
 impl<'a> Library<'a> for RawLib{
     type Interf = RawInterf<'a>;
 
+    const DEFAULT_PATHS: &'static [&'static str] = &[];
+
     fn open(path: &str) -> Result<Self, Error> where Self: Sized {
         //The order is : PF Ring, WPCap, PCap
         match PFRing::open(path){
@@ -43,13 +45,13 @@ impl<'a> Library<'a> for RawLib{
         }
     }
 
-    fn open_default_locations() -> Result<Self, Error> where Self: Sized {
+    fn open_default_paths() -> Result<Self, Error> where Self: Sized {
         //The order is : PF Ring, WPCap, PCap
-        match PFRing::open_default_locations(){
+        match PFRing::open_default_paths(){
             Ok(val) => Ok(RawLib::PFRing(val)),
-            Err(..) => match WPCap::open_default_locations(){
+            Err(..) => match WPCap::open_default_paths(){
                 Ok(val) => Ok(RawLib::WPCap(val)),
-                Err(..) => match PCap::open_default_locations() {
+                Err(..) => match PCap::open_default_paths() {
                     Ok(val) => Ok(RawLib::PCap(val)),
                     //use the last error as a result for the whole call
                     Err(err) => Err(err)

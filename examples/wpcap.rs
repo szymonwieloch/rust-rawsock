@@ -2,7 +2,7 @@ extern crate rawsock;
 use rawsock::{WPCap, Library, Interface, InterfaceDescription};
 
 fn main(){
-    let pcap = WPCap::open_default_locations().expect("Could not open wpcap library");
+    let pcap = WPCap::open_default_paths().expect("Could not open wpcap library");
     println!("Devices:");
     let devices: Vec<InterfaceDescription> = pcap.get_devices().expect("Could not get devices").collect();
     for dev in devices.iter()  {

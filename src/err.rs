@@ -17,7 +17,9 @@ pub enum Error {
     ///Sending raw packet failed.
     SendingPacket(String),
     ///Obtaining device description list failed.
-    GettingDeviceDescriptionList(String)
+    GettingDeviceDescriptionList(String),
+    ///No paths were provided by the user
+    NoPathsProvided
 }
 
 impl ErrorTrait for Error {
@@ -28,7 +30,8 @@ impl ErrorTrait for Error {
             Error::OpeningInterface(ref txt) => txt,
             Error::ReceivingPacket(ref txt) => txt,
             Error::SendingPacket(ref txt) => txt,
-            Error::GettingDeviceDescriptionList(ref txt) => txt
+            Error::GettingDeviceDescriptionList(ref txt) => txt,
+            Error::NoPathsProvided => "No library paths were provided."
         }
     }
 }
@@ -41,7 +44,8 @@ impl Display for Error {
             Error::OpeningInterface(ref txt)=> f.write_str(txt),
             Error::ReceivingPacket(ref txt) => f.write_str(txt),
             Error::SendingPacket(ref txt) => f.write_str(txt),
-            Error::GettingDeviceDescriptionList(ref txt) => f.write_str(txt)
+            Error::GettingDeviceDescriptionList(ref txt) => f.write_str(txt),
+            Error::NoPathsProvided => f.write_str("No library paths were provided.")
         }
     }
 }

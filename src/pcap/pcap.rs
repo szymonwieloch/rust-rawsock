@@ -4,7 +4,6 @@ use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::interface::PCapInterface;
 use super::dev_iter::PCapInterfaceDescriptionIterator;
-use crate::common::open_locations;
 use std::ffi::CStr;
 
 
@@ -39,9 +38,9 @@ pub struct PCap {
 
 impl<'a> Library<'a> for PCap {
     type Interf = PCapInterface<'a>;
-    fn open_default_locations() -> Result<Self, Error> {
-        open_locations(&POSSIBLE_NAMES)
-    }
+
+    const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
+
     fn open(path: &str) -> Result<Self, Error> {
         let dll: Container<PCapDll> = unsafe { Container::load(path)}?;
         Ok(Self {

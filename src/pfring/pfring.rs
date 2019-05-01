@@ -20,6 +20,8 @@ impl<'a> Library<'a> for PFRing {
 
     type Interf = PFRingInterface<'a>;
 
+    const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
+
     fn open(path: &str) -> Result<Self, Error> where Self: Sized {
         let dll: Container<PFRingDll> = unsafe { Container::load(path)}?;
         Ok(Self {
@@ -30,7 +32,7 @@ impl<'a> Library<'a> for PFRing {
     fn open_interface(&'a self, name: &str) -> Result<Self::Interf, Error> {
         PFRingInterface::new(name, &self.dll)
     }
-    fn open_default_locations() -> Result<Self, Error> where Self: Sized {
+    fn open_default_paths() -> Result<Self, Error> where Self: Sized {
         open_locations(&POSSIBLE_NAMES)
     }
     fn version(&self) -> String {

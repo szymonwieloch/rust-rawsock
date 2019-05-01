@@ -2,7 +2,7 @@ extern crate rawsock;
 use rawsock::{RawLib, Library, Interface};
 
 fn main(){
-    let rawlib = RawLib::open_default_locations().expect("Could not open pcap library");
+    let rawlib = RawLib::open_default_paths().expect("Could not open pcap library");
     //Because PF ring does not support listing devices, neither does RawLib
     const DEV_NAME: &str = "/dev/eth0";
     let mut dev = rawlib.open_interface(DEV_NAME).expect("Could not open interface");

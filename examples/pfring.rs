@@ -2,7 +2,7 @@ extern crate rawsock;
 use rawsock::{PFRing, Library, Interface};
 
 fn main(){
-    let pfring = PFRing::open_default_locations().expect("Could not open pcap library");
+    let pfring = PFRing::open_default_paths().expect("Could not open pcap library");
     println!("Devices:");
     //PF Ring does not support obtaining a list of devices - at least for now
     //so you just need to know a device path specific to your platform

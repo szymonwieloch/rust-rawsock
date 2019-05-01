@@ -4,7 +4,6 @@ use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::interface::WPCapInterface;
 use super::dev_iter::WPCapDeviceDescriptionIterator;
-use crate::common::open_locations;
 use std::ffi::CStr;
 
 
@@ -23,6 +22,8 @@ pub struct WPCap {
 impl<'a> Library<'a> for WPCap {
     type Interf = WPCapInterface<'a>;
 
+    const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
+
     fn open(path: &str) -> Result<Self, Error> {
         let dll: Container<WPCapDll> = unsafe { Container::load(path)}?;
         Ok(Self {
@@ -33,9 +34,7 @@ impl<'a> Library<'a> for WPCap {
     fn open_interface(&'a self, name: & str) -> Result<WPCapInterface<'a>, Error>{
         WPCapInterface::new(name, &self.dll)
     }
-    fn open_default_locations() -> Result<Self, Error> where Self: Sized {
-        open_locations(&POSSIBLE_NAMES)
-    }
+
     fn version(&self) -> String {
         unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned()
     }
