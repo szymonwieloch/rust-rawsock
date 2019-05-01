@@ -1,5 +1,5 @@
 language: rust
-sudo: false
+sudo: true
 cache: cargo
 rust:
   - 1.31.0
@@ -12,3 +12,11 @@ os:
 env:
   - ARCH=x86_64
   - ARCH=i686
+install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then
+    choco install winpcap
+    fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+    fi
