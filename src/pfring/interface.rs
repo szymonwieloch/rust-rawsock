@@ -1,5 +1,6 @@
-use {Interface, Error, BorrowedPacket, DataLink};
+use crate::common::{Interface, BorrowedPacket, DataLink};
 use super::dll::{PFRing, PFRingDll, PFRingPacketHeader};
+use crate::err::Error;
 use dlopen::wrapper::Container;
 use std::ffi::CString;
 use std::mem::uninitialized;

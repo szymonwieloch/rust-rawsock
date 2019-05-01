@@ -2,7 +2,7 @@ use super::dll::{WPCapDll, SUCCESS, PCapInterface, PCapErrBuf};
 use super::super::Error;
 use std::ffi::CStr;
 use std::ptr::null;
-use InterfaceDescription;
+use crate::common::InterfaceDescription;
 
 pub struct WPCapDeviceDescriptionIterator<'a>{
     first: * const PCapInterface,

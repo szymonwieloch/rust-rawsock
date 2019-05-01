@@ -4,7 +4,7 @@ use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::interface::WPCapInterface;
 use super::dev_iter::WPCapDeviceDescriptionIterator;
-use common::open_locations;
+use crate::common::open_locations;
 use std::ffi::CStr;
 
 

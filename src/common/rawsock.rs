@@ -1,4 +1,4 @@
-use {PCap, PCapInterface, WPCap, WPCapInterface, PFRing, PFRingInterface, Library, Interface, Error, BorrowedPacket, DataLink};
+use crate::{PCap, PCapInterface, WPCap, WPCapInterface, PFRing, PFRingInterface, Library, Interface, Error, BorrowedPacket, DataLink};
 
 ///Wrapper over several library implementations that automatically chooses available library
 /// and hides the internal complexity of passing calls tot he right implementation.

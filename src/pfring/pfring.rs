@@ -3,7 +3,7 @@ use super::interface::PFRingInterface;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::dll::PFRingDll;
-use common::open_locations;
+use crate::common::open_locations;
 
 const POSSIBLE_NAMES: [&'static str; 1] = [
     "libpfring.so"

@@ -2,7 +2,7 @@ use super::dll::{PCapDll, SUCCESS, PCapInterface, PCapErrBuf};
 use super::super::Error;
 use std::ffi::CStr;
 use std::ptr::null;
-use InterfaceDescription;
+use crate::common::InterfaceDescription;
 
 ///pcap iterator of device descriptions.
 pub struct PCapInterfaceDescriptionIterator<'a>{

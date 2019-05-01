@@ -21,7 +21,7 @@ pub struct PFRingPacketHeader {
     extended_hdr: [u8; 512]
 }
 
-///Dynami link library interface of pfring.so
+///Dynamic link library interface of pfring.so
 #[derive(WrapperApi)]
 pub struct PFRingDll{
     pfring_recv: unsafe extern "C" fn (ring: * const PFRing, buffer: * mut * mut u8, buffer_len: c_uint, hdr: * mut PFRingPacketHeader, wait_for_incoming_packet: u8) -> c_int,

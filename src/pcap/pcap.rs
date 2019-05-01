@@ -4,7 +4,7 @@ use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::interface::PCapInterface;
 use super::dev_iter::PCapInterfaceDescriptionIterator;
-use common::open_locations;
+use crate::common::open_locations;
 use std::ffi::CStr;
 
 

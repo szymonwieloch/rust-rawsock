@@ -1,4 +1,4 @@
-use err::Error;
+use crate::err::Error;
 use super::{BorrowedPacket, DataLink};
 
 ///Trait for structures representing an opened interface (or network card or network device)
