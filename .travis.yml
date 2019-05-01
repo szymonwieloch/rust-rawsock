@@ -14,9 +14,11 @@ env:
   - ARCH=i686
 install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      :;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then
-    choco install winpcap
+      choco install winpcap;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      :;
     fi
