@@ -25,9 +25,7 @@ pub trait Interface<'a>{
 /// There are several libraries that can be used among different platforms.
 /// For example pcap.so, wpcap.dll or pfring.so.
 /// This trait provides a consistent interface to all of them.
-pub trait Library<'a>{
-    ///Type of interface that gets opened by this library
-    type Interf: Interface<'a>;
+pub trait Library{
 
     const DEFAULT_PATHS: &'static [&'static str];
 
@@ -54,7 +52,7 @@ pub trait Library<'a>{
     ///Opens interface (network card or network device) with the provided name.
     /// Name depends on the platform, for example on linux this is a path to the file representing
     /// a device, on Windows this is a GUID of the device.
-    fn open_interface(&'a self, name: &str) -> Result<Self::Interf, Error>;
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<dyn Interface<'a>+'a>, Error>;
 
     ///Returns library version
     fn version(&self) -> String;

@@ -1,4 +1,4 @@
-use super::super::{Library};
+use super::super::{Library, Interface};
 use super::dll::PCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -36,8 +36,7 @@ pub struct PCap {
     dll: Container<PCapDll>
 }
 
-impl<'a> Library<'a> for PCap {
-    type Interf = PCapInterface<'a>;
+impl Library for PCap {
 
     const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
 
@@ -48,17 +47,26 @@ impl<'a> Library<'a> for PCap {
         })
     }
 
-    fn open_interface(&'a self, name: & str) -> Result<PCapInterface<'a>, Error>{
-       PCapInterface::new(name, &self.dll)
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<Interface<'a> +'a>, Error> {
+        match self.open_interface(name){
+            Ok(interf) => Ok(Box::new(interf) as Box<Interface>),
+            Err(e) => Err(e)
+        }
     }
+
     fn version(&self) -> String {
         unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned()
     }
 }
 
 impl PCap {
-    pub fn get_devices<'a>(&'a self) -> Result<PCapInterfaceDescriptionIterator, Error> {
+    pub fn get_devices(& self) -> Result<PCapInterfaceDescriptionIterator, Error> {
         PCapInterfaceDescriptionIterator::new(&self.dll)
     }
+
+    fn open_interface(&self, name: & str) -> Result<PCapInterface, Error>{
+       PCapInterface::new(name, &self.dll)
+    }
+
 }
 

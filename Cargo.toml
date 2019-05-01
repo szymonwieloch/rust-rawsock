@@ -30,6 +30,3 @@ name = "wpcap"
 
 [[example]]
 name = "pfring"
-
-[[example]]
-name = "rawlib"

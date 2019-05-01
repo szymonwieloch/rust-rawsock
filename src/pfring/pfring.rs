@@ -1,9 +1,8 @@
-use super::super::Library;
+use super::super::{Library, Interface};
 use super::interface::PFRingInterface;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::dll::PFRingDll;
-use crate::common::open_locations;
 
 const POSSIBLE_NAMES: [&'static str; 1] = [
     "libpfring.so"
@@ -16,9 +15,7 @@ pub struct PFRing {
 
 
 
-impl<'a> Library<'a> for PFRing {
-
-    type Interf = PFRingInterface<'a>;
+impl Library for PFRing {
 
     const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
 
@@ -29,12 +26,13 @@ impl<'a> Library<'a> for PFRing {
         })
     }
 
-    fn open_interface(&'a self, name: &str) -> Result<Self::Interf, Error> {
-        PFRingInterface::new(name, &self.dll)
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<Interface<'a> +'a>, Error> {
+        match self.open_interface(name){
+            Ok(interf) => Ok(Box::new(interf) as Box<Interface>),
+            Err(e) => Err(e)
+        }
     }
-    fn open_default_paths() -> Result<Self, Error> where Self: Sized {
-        open_locations(&POSSIBLE_NAMES)
-    }
+
     fn version(&self) -> String {
         let mut ver: u32 = 0;
         unsafe{self.dll.pfring_version_noring(&mut ver)};
@@ -43,4 +41,10 @@ impl<'a> Library<'a> for PFRing {
         let release: u8 = ver as u8;
         format!("{}.{}.{}", major, minor, release)
     }
+}
+
+impl PFRing{
+    fn open_interface(& self, name: &str) -> Result<PFRingInterface, Error> {
+    PFRingInterface::new(name, &self.dll)
+}
 }

@@ -1,4 +1,4 @@
-use super::super::Library;
+use super::super::{Library, Interface};
 use super::dll::WPCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -19,8 +19,7 @@ pub struct WPCap {
     dll: Container<WPCapDll>
 }
 
-impl<'a> Library<'a> for WPCap {
-    type Interf = WPCapInterface<'a>;
+impl Library for WPCap {
 
     const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
 
@@ -31,8 +30,11 @@ impl<'a> Library<'a> for WPCap {
         })
     }
 
-    fn open_interface(&'a self, name: & str) -> Result<WPCapInterface<'a>, Error>{
-        WPCapInterface::new(name, &self.dll)
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<Interface<'a> +'a>, Error> {
+        match self.open_interface(name){
+            Ok(interf) => Ok(Box::new(interf) as Box<Interface>),
+            Err(e) => Err(e)
+        }
     }
 
     fn version(&self) -> String {
@@ -43,5 +45,9 @@ impl<'a> Library<'a> for WPCap {
 impl WPCap {
     pub fn get_devices<'a>(&'a self) -> Result<WPCapDeviceDescriptionIterator, Error> {
         WPCapDeviceDescriptionIterator::new(&self.dll)
+    }
+
+    fn open_interface(& self, name: & str) -> Result<WPCapInterface, Error>{
+        WPCapInterface::new(name, &self.dll)
     }
 }
