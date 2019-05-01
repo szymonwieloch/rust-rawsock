@@ -1,10 +1,8 @@
 # rust-rawsock
-[![Travis CI][tcii]][tci] [![Appveyor CI][acii]][aci] [![Crates CI][ccii]][cci]
+[![Travis CI][tcii]][tci] [![Crates CI][ccii]][cci]
 
 [tcii]: https://travis-ci.org/szymonwieloch/rust-rawsock.svg?branch=master
 [tci]: https://travis-ci.org/szymonwieloch/rust-rawsock
-[acii]: https://ci.appveyor.com/api/projects/status/github/szymonwieloch/rust-rawsock?svg=true
-[aci]: https://ci.appveyor.com/project/szymonwieloch/rust-rawsock
 [ccii]: https://img.shields.io/crates/v/rawsock.svg
 [cci]: https://crates.io/crates/rawsock
 

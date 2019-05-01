@@ -13,10 +13,6 @@ categories = ["network-programming"]
 repository = "szymonwieloch/rust-rawsock"
 branch = "master"
 
-[badges.appveyor]
-repository = "szymonwieloch/rust-rawsock"
-branch = "master"
-
 [badges.is-it-maintained-open-issues]
 repository = "szymonwieloch/rust-rawsock"
 
