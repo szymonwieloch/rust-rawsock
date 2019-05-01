@@ -34,11 +34,15 @@ impl<'a> Iterator for PCapInterfaceDescriptionIterator<'a>{
         if self.current.is_null(){
             None
         } else {
-            let tmp = self.current;
+            let tmp = unsafe{&*self.current};
             self.current = unsafe { &*self.current }.next;
             Some(InterfaceDescription {
-                name: unsafe{CStr::from_ptr((*tmp).name)}.to_string_lossy().into_owned(),
-                description: unsafe{CStr::from_ptr((*tmp).description)}.to_string_lossy().into_owned()
+                name: unsafe{CStr::from_ptr(tmp.name)}.to_string_lossy().into_owned(),
+                description: if tmp.description.is_null() {
+                        String::new()
+                    } else {
+                        unsafe { CStr::from_ptr(tmp.description) }.to_string_lossy().into_owned()
+                    }
             })
         }
     }

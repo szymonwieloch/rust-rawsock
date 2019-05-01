@@ -24,16 +24,12 @@ time = "0.1"
 
 [[example]]
 name = "pcap"
-crate-type = ["bin"]
 
 [[example]]
 name = "wpcap"
-crate-type = ["bin"]
 
 [[example]]
 name = "pfring"
-crate-type = ["bin"]
 
 [[example]]
 name = "rawlib"
-crate-type = ["bin"]
