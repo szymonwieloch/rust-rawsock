@@ -44,14 +44,16 @@ pub struct PCapInterface {
     pub flags: c_uint	/* PCAP_IF_ interface flags */
 }
 
-///Equivalent of C struct pcap_hdr_t
+///Equivalent of C struct pcap_pkthdr
 #[repr(C)]
 pub struct PCapPacketHeader {
     pub ts: PCapTimeVal,
     pub caplen: c_uint,
     pub len: c_uint,
-    #[cfg(target_os="macos")]
-    pub comment: [c_char; 256]
+    //some documentation suggest that this additional field should be present on MAC os.
+    //but the main documentation seems to state something different.
+    //#[cfg(target_os="macos")]
+    //pub comment: [c_char; 256]
 }
 
 ///Equivalent of C struct timeval_t
