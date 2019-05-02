@@ -1,7 +1,7 @@
 mod packet;
 mod traits;
 pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
-pub use self::traits::{Library, Interface};
+pub use self::traits::{Library, Interface, LibraryVersion};
 
 use dlopen::Error as DlopenError;
 use std::io::{Error as IoError, ErrorKind as IoErrorKind};
@@ -24,8 +24,9 @@ pub enum DataLink{
     Other
 }
 
+
+
 /*
 fn open_best_library() -> Result<Box<dyn Library>, Error> {
     panic!("Not yet implemented")
-}
-*/
+}*/

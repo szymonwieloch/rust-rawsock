@@ -1,4 +1,4 @@
-use super::super::{Library, Interface};
+use crate::{Library, Interface, LibraryVersion};
 use super::dll::WPCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -37,8 +37,8 @@ impl Library for WPCap {
         }
     }
 
-    fn version(&self) -> String {
-        unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned()
+    fn version(&self) -> LibraryVersion {
+        LibraryVersion::WPCap(unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned())
     }
 }
 

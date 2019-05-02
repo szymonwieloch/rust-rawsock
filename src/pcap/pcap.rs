@@ -1,4 +1,4 @@
-use super::super::{Library, Interface};
+use super::super::{Library, Interface, LibraryVersion};
 use super::dll::PCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -54,8 +54,8 @@ impl Library for PCap {
         }
     }
 
-    fn version(&self) -> String {
-        unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned()
+    fn version(&self) -> LibraryVersion {
+        LibraryVersion::PCap(unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned())
     }
 }
 

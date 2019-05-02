@@ -1,4 +1,4 @@
-use super::super::{Library, Interface};
+use crate::{Library, Interface, LibraryVersion};
 use super::interface::PFRingInterface;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -33,13 +33,13 @@ impl Library for PFRing {
         }
     }
 
-    fn version(&self) -> String {
+    fn version(&self) -> LibraryVersion {
         let mut ver: u32 = 0;
         unsafe{self.dll.pfring_version_noring(&mut ver)};
         let major: u8 = (ver >>16) as u8;
         let minor: u8 = (ver >> 8) as u8;
         let release: u8 = ver as u8;
-        format!("{}.{}.{}", major, minor, release)
+        LibraryVersion::PFRing(format!("{}.{}.{}", major, minor, release))
     }
 }
 

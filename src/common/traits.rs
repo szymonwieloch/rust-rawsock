@@ -2,6 +2,13 @@ use crate::err::Error;
 use super::{BorrowedPacket, DataLink};
 use std::iter::IntoIterator;
 
+
+pub enum LibraryVersion{
+    PCap(String),
+    WPCap(String),
+    PFRing(String)
+}
+
 ///Trait for structures representing an opened interface (or network card or network device)
 ///
 /// Interfaces are opened using a concrete library - check the Library trait.
@@ -55,5 +62,5 @@ pub trait Library{
     fn open_interface<'a>(&'a self, name: &str) -> Result<Box<dyn Interface<'a>+'a>, Error>;
 
     ///Returns library version
-    fn version(&self) -> String;
+    fn version(&self) -> LibraryVersion;
 }
