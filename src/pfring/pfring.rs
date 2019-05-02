@@ -4,20 +4,26 @@ use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::dll::PFRingDll;
 
-const POSSIBLE_NAMES: [&'static str; 1] = [
+#[cfg(all(unix, not(any(target_os = "macos", target_os = "ios"))))]
+pub const DEFAULT_PATHS: [&'static str; 1] = [
     "libpfring.so"
 ];
 
+#[cfg(any(windows, target_os = "macos", target_os = "ios"))]
+pub const DEFAULT_PATHS: [&'static str; 1] = [];
+
+
+
 ///Instance of a opened pfring library.
-pub struct PFRing {
+pub struct PFRingLibrary {
     dll: Container<PFRingDll>
 }
 
 
 
-impl Library for PFRing {
+impl Library for PFRingLibrary {
     fn default_paths() -> &'static [&'static str] where Self: Sized {
-        &POSSIBLE_NAMES
+        &DEFAULT_PATHS
     }
 
     //const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
@@ -46,7 +52,7 @@ impl Library for PFRing {
     }
 }
 
-impl PFRing{
+impl PFRingLibrary {
     fn open_interface(& self, name: &str) -> Result<PFRingInterface, Error> {
     PFRingInterface::new(name, &self.dll)
 }

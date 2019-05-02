@@ -88,16 +88,13 @@ extern crate dlopen_derive;
 extern crate libc;
 extern crate time;
 
-mod pcap;
-mod wpcap;
+pub mod pcap;
+pub mod wpcap;
+pub mod pfring;
 mod pcap_common;
-mod pfring;
+
 mod err;
 mod common;
-
-pub use self::pcap::{PCap, PCapInterfaceDescriptionIterator, PCapInterface};
-pub use self::wpcap::{WPCap, WPCapDeviceDescriptionIterator, WPCapInterface};
-pub use self::pfring::{PFRing, PFRingInterface};
 
 pub use self::common::{Packet, Interface, Library, InterfaceDescription, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library};
 pub use self::err::Error;

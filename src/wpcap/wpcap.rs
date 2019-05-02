@@ -8,7 +8,7 @@ use std::ffi::CStr;
 
 
 #[cfg(windows)]
-const POSSIBLE_NAMES: [&'static str; 4] = [
+pub const DEFAULT_PATHS: [&'static str; 4] = [
     "NPcap\\Packet.dll",
     "Packet.dll",
     "Npcap\\wpcap.dll",
@@ -16,17 +16,17 @@ const POSSIBLE_NAMES: [&'static str; 4] = [
 ];
 
 #[cfg(not(windows))]
-const POSSIBLE_NAMES: [&'static str; 0] = [];
+pub const DEFAULT_PATHS: [&'static str; 0] = [];
 
 
 
-pub struct WPCap {
+pub struct WPCapLibrary {
     dll: Container<WPCapDll>
 }
 
-impl Library for WPCap {
+impl Library for WPCapLibrary {
     fn default_paths() -> &'static [&'static str] where Self: Sized {
-        &POSSIBLE_NAMES
+        &DEFAULT_PATHS
     }
 
     //const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
@@ -50,8 +50,8 @@ impl Library for WPCap {
     }
 }
 
-impl WPCap {
-    pub fn get_devices<'a>(&'a self) -> Result<WPCapDeviceDescriptionIterator, Error> {
+impl WPCapLibrary {
+    pub fn get_devices(&self) -> Result<WPCapDeviceDescriptionIterator, Error> {
         WPCapDeviceDescriptionIterator::new(&self.dll)
     }
 

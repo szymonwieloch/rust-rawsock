@@ -2,7 +2,9 @@ mod packet;
 mod traits;
 pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
 pub use self::traits::{Library, Interface, LibraryVersion};
-pub use crate::{PFRing, PCap, WPCap};
+use crate::pcap::PCapLibrary;
+use crate::pfring::PFRingLibrary;
+use crate::wpcap::WPCapLibrary;
 
 use super::err::Error;
 
@@ -27,13 +29,13 @@ pub enum DataLink{
 
 
 pub fn open_best_library() -> Result<Box<dyn Library>, Error> {
-    if let Ok(l) = PFRing::open_default_paths() {
+    if let Ok(l) = PFRingLibrary::open_default_paths() {
         return Ok(Box::new(l));
     }
-    if let Ok(l) = WPCap::open_default_paths() {
+    if let Ok(l) = WPCapLibrary::open_default_paths() {
         return Ok(Box::new(l));
     }
-    match PCap::open_default_paths() {
+    match PCapLibrary::open_default_paths() {
         Ok(l) => Ok(Box::new(l)),
         Err(e) => Err(e)
     }

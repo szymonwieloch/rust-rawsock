@@ -3,4 +3,4 @@ mod interface;
 mod pfring;
 
 pub use self::interface::PFRingInterface;
-pub use self::pfring::PFRing;
+pub use self::pfring::{PFRingLibrary, DEFAULT_PATHS};

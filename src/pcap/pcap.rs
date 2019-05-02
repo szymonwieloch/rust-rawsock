@@ -10,13 +10,13 @@ use std::ffi::CStr;
 //Different platforms have different locations:
 
 #[cfg(any(target_os = "macos", target_os = "ios"))]
-const POSSIBLE_NAMES: [&'static str; 2] = [
+pub const DEFAULT_PATHS: [&'static str; 2] = [
     "libpcap.A.dylib",
     "libpcap.dylib"
 ];
 
 #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios"))))]
-const POSSIBLE_NAMES: [&'static str; 4] = [
+pub const DEFAULT_PATHS: [&'static str; 4] = [
     "libpcap.so",
     "libpcap.so.0.9.5",
     "libpcap.so.0.9.4",
@@ -24,7 +24,7 @@ const POSSIBLE_NAMES: [&'static str; 4] = [
 ];
 
 #[cfg(windows)]
-const POSSIBLE_NAMES: [&'static str; 4] = [
+pub const DEFAULT_PATHS: [&'static str; 4] = [
     "NPcap\\Packet.dll",
     "Packet.dll",
     "Npcap\\wpcap.dll",
@@ -32,13 +32,13 @@ const POSSIBLE_NAMES: [&'static str; 4] = [
 ];
 
 ///Instance of a opened pcap library.
-pub struct PCap {
+pub struct PCapLibrary {
     dll: Container<PCapDll>
 }
 
-impl Library for PCap {
+impl Library for PCapLibrary {
     fn default_paths() -> &'static [&'static str] where Self: Sized {
-        &POSSIBLE_NAMES
+        &DEFAULT_PATHS
     }
 
     //const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
@@ -62,7 +62,7 @@ impl Library for PCap {
     }
 }
 
-impl PCap {
+impl PCapLibrary {
     pub fn get_devices(& self) -> Result<PCapInterfaceDescriptionIterator, Error> {
         PCapInterfaceDescriptionIterator::new(&self.dll)
     }
