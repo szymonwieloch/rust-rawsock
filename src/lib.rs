@@ -99,5 +99,5 @@ pub use self::pcap::{PCap, PCapInterfaceDescriptionIterator, PCapInterface};
 pub use self::wpcap::{WPCap, WPCapDeviceDescriptionIterator, WPCapInterface};
 pub use self::pfring::{PFRing, PFRingInterface};
 
-pub use self::common::{Packet, Interface, Library, InterfaceDescription, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion};
+pub use self::common::{Packet, Interface, Library, InterfaceDescription, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library};
 pub use self::err::Error;

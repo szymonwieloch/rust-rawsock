@@ -4,8 +4,6 @@ pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
 pub use self::traits::{Library, Interface, LibraryVersion};
 pub use crate::{PFRing, PCap, WPCap};
 
-use dlopen::Error as DlopenError;
-use std::io::{Error as IoError, ErrorKind as IoErrorKind};
 use super::err::Error;
 
 ///Describes a network card device.
@@ -28,7 +26,7 @@ pub enum DataLink{
 
 
 
-fn open_best_library() -> Result<Box<dyn Library>, Error> {
+pub fn open_best_library() -> Result<Box<dyn Library>, Error> {
     if let Ok(l) = PFRing::open_default_paths() {
         return Ok(Box::new(l));
     }

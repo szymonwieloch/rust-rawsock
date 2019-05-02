@@ -1,5 +1,5 @@
 extern crate rawsock;
-use rawsock::{WPCap, Library, Interface, InterfaceDescription};
+use rawsock::{WPCap, Library, InterfaceDescription};
 
 fn main(){
     let pcap = WPCap::open_default_paths().expect("Could not open wpcap library");
