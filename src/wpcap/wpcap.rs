@@ -7,7 +7,7 @@ use super::dev_iter::WPCapDeviceDescriptionIterator;
 use std::ffi::CStr;
 
 
-
+#[cfg(windows)]
 const POSSIBLE_NAMES: [&'static str; 4] = [
     "NPcap\\Packet.dll",
     "Packet.dll",
@@ -15,13 +15,21 @@ const POSSIBLE_NAMES: [&'static str; 4] = [
     "wpcap.dll"
 ];
 
+#[cfg(not(windows))]
+const POSSIBLE_NAMES: [&'static str; 0] = [];
+
+
+
 pub struct WPCap {
     dll: Container<WPCapDll>
 }
 
 impl Library for WPCap {
+    fn default_paths() -> &'static [&'static str] where Self: Sized {
+        &POSSIBLE_NAMES
+    }
 
-    const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
+    //const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
 
     fn open(path: &str) -> Result<Self, Error> {
         let dll: Container<WPCapDll> = unsafe { Container::load(path)}?;

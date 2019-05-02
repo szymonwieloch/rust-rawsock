@@ -2,6 +2,7 @@ mod packet;
 mod traits;
 pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
 pub use self::traits::{Library, Interface, LibraryVersion};
+pub use crate::{PFRing, PCap, WPCap};
 
 use dlopen::Error as DlopenError;
 use std::io::{Error as IoError, ErrorKind as IoErrorKind};
@@ -26,7 +27,16 @@ pub enum DataLink{
 
 
 
-/*
+
 fn open_best_library() -> Result<Box<dyn Library>, Error> {
-    panic!("Not yet implemented")
-}*/
+    if let Ok(l) = PFRing::open_default_paths() {
+        return Ok(Box::new(l));
+    }
+    if let Ok(l) = WPCap::open_default_paths() {
+        return Ok(Box::new(l));
+    }
+    match PCap::open_default_paths() {
+        Ok(l) => Ok(Box::new(l)),
+        Err(e) => Err(e)
+    }
+}

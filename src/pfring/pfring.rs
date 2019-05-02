@@ -16,8 +16,11 @@ pub struct PFRing {
 
 
 impl Library for PFRing {
+    fn default_paths() -> &'static [&'static str] where Self: Sized {
+        &POSSIBLE_NAMES
+    }
 
-    const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
+    //const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
 
     fn open(path: &str) -> Result<Self, Error> where Self: Sized {
         let dll: Container<PFRingDll> = unsafe { Container::load(path)}?;

@@ -37,8 +37,11 @@ pub struct PCap {
 }
 
 impl Library for PCap {
+    fn default_paths() -> &'static [&'static str] where Self: Sized {
+        &POSSIBLE_NAMES
+    }
 
-    const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
+    //const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
 
     fn open(path: &str) -> Result<Self, Error> {
         let dll: Container<PCapDll> = unsafe { Container::load(path)}?;

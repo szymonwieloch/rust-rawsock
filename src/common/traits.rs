@@ -9,6 +9,7 @@ pub enum LibraryVersion{
     PFRing(String)
 }
 
+
 ///Trait for structures representing an opened interface (or network card or network device)
 ///
 /// Interfaces are opened using a concrete library - check the Library trait.
@@ -34,12 +35,14 @@ pub trait Interface<'a>{
 /// This trait provides a consistent interface to all of them.
 pub trait Library{
 
-    const DEFAULT_PATHS: &'static [&'static str];
+    //const DEFAULT_PATHS: &'static [&'static str];
 
     ///Opens this library by searching for most common paths and names fro the given platform
     fn open_default_paths() -> Result<Self, Error> where Self: Sized {
-        Self::open_paths(Self::DEFAULT_PATHS.iter().map(|s|*s))
+        Self::open_paths(Self::default_paths().iter().map(|s|*s))
     }
+
+    fn default_paths() -> &'static[&'static str] where Self: Sized;
 
     ///Opens library searching in the list of provided paths.
     fn open_paths<'b, T>(paths: T) -> Result<Self, Error> where Self: Sized, T:IntoIterator<Item=&'b str>{
