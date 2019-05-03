@@ -22,6 +22,9 @@ dlopen_derive = "0.1.0"
 libc = "0.2.29"
 time = "0.1"
 
+[dev-dependencies]
+interfaces2 = "0.0.5"
+
 [[example]]
 name = "pcap"
 
@@ -30,3 +33,6 @@ name = "wpcap"
 
 [[example]]
 name = "pfring"
+
+[[example]]
+name = "dynamic"

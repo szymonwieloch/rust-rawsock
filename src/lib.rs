@@ -96,5 +96,5 @@ mod pcap_common;
 mod err;
 mod common;
 
-pub use self::common::{Packet, Interface, Library, InterfaceDescription, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library};
+pub use self::common::{Packet, Interface, Library, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library};
 pub use self::err::Error;

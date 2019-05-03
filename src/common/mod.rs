@@ -1,21 +1,13 @@
 mod packet;
 mod traits;
 pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
-pub use self::traits::{Library, Interface, LibraryVersion};
+pub use self::traits::{Library, Interface};
 use crate::pcap::PCapLibrary;
 use crate::pfring::PFRingLibrary;
 use crate::wpcap::WPCapLibrary;
+use std::fmt::{Display, Formatter, Error as FmtError};
 
 use super::err::Error;
-
-///Describes a network card device.
-#[derive(Debug)]
-pub struct InterfaceDescription {
-    ///Name of the interface.
-    pub name: String,
-    ///Description of the interface.
-    pub description: String
-}
 
 ///Kind of data link - protocol used below the surface.
 #[derive(Debug, Copy, Clone)]
@@ -25,7 +17,23 @@ pub enum DataLink{
     Other
 }
 
+///Kind of library and its version.
+#[derive(Debug, Clone)]
+pub enum LibraryVersion{
+    PCap(String),
+    WPCap(String),
+    PFRing(String)
+}
 
+impl Display for LibraryVersion {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
+        match self {
+            LibraryVersion::PCap(ver) => write!(f, " pcap {}", ver),
+            LibraryVersion::WPCap(ver) => write!(f, "wpcap {}", ver),
+            LibraryVersion::PFRing(ver) => write!(f, "pfring {}", ver)
+        }
+    }
+}
 
 
 pub fn open_best_library() -> Result<Box<dyn Library>, Error> {

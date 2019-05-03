@@ -3,7 +3,6 @@ use super::dll::PCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::interface::PCapInterface;
-use super::dev_iter::PCapInterfaceDescriptionIterator;
 use std::ffi::CStr;
 
 
@@ -63,10 +62,6 @@ impl Library for PCapLibrary {
 }
 
 impl PCapLibrary {
-    pub fn get_devices(& self) -> Result<PCapInterfaceDescriptionIterator, Error> {
-        PCapInterfaceDescriptionIterator::new(&self.dll)
-    }
-
     fn open_interface(&self, name: & str) -> Result<PCapInterface, Error>{
        PCapInterface::new(name, &self.dll)
     }

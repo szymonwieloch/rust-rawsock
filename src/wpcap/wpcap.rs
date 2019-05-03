@@ -3,7 +3,6 @@ use super::dll::WPCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::interface::WPCapInterface;
-use super::dev_iter::WPCapDeviceDescriptionIterator;
 use std::ffi::CStr;
 
 
@@ -51,9 +50,6 @@ impl Library for WPCapLibrary {
 }
 
 impl WPCapLibrary {
-    pub fn get_devices(&self) -> Result<WPCapDeviceDescriptionIterator, Error> {
-        WPCapDeviceDescriptionIterator::new(&self.dll)
-    }
 
     fn open_interface(& self, name: & str) -> Result<WPCapInterface, Error>{
         WPCapInterface::new(name, &self.dll)

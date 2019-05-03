@@ -1,8 +1,9 @@
 use time::Timespec;
 use std::ops::Deref;
+use std::fmt::{Display, Formatter, Error as FmtError, LowerHex};
 
 ///Trait for obtained packets - common part between borrowed and owned versions.
-pub trait Packet : Deref<Target=[u8]>{
+pub trait Packet : Deref<Target=[u8]> + Display{
     ///Returns the time when this packet was received.
     fn when(&self) -> Timespec;
 }
@@ -49,6 +50,15 @@ impl<'a> Packet for BorrowedPacket<'a> {
     }
 }
 
+impl<'a> Display for BorrowedPacket<'a> {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
+        for b in self.packet {
+            LowerHex::fmt(b, f);
+        }
+        Ok(())
+    }
+}
+
 ///Structure representing obtained raw packet - owned version.
 pub struct OwnedPacket {
     when_received: Timespec,
@@ -67,6 +77,15 @@ impl Deref for OwnedPacket {
 
     fn deref(&self) -> &Self::Target {
         &self.packet
+    }
+}
+
+impl Display for OwnedPacket {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
+        for b in &self.packet {
+            LowerHex::fmt(b, f);
+        }
+        Ok(())
     }
 }
 

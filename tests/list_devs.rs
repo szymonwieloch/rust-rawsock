@@ -1,23 +1,30 @@
-use rawsock::{Library, InterfaceDescription};
+use rawsock::Library;
 use rawsock::pcap::PCapLibrary;
+use rawsock::wpcap::WPCapLibrary;
+use rawsock::pfring::PFRingLibrary;
+use interfaces2::Interface;
 
 /*
-These tests assume:
-- You have the relevant library available in the operating system.
+Tests in this module require correctly setup environment. Therefore they are disabled (ignored)
+by default. You can enable them by addding --ignored flag to your cargo testing command.
+Some tests also may require administrative privileges.
 */
 
-#[test]
-fn open_devices() {
-    let pcap = PCapLibrary::open_default_paths().expect("Could not open pcap library");
-    let _devices: Vec<InterfaceDescription> = pcap.get_devices().expect("Could not get devices").collect();
+fn choose_interf() -> Option<String>{
+    let interfs = Interface::get_all().expect("Could not obtain interface list");
+    if let Some(i) = interfs.first(){
+        Some(i.name.clone())
+    } else {
+        None
+    }
 }
 
 #[test]
 #[ignore]
-fn find_devices(){
+fn open_pcap() {
     let pcap = PCapLibrary::open_default_paths().expect("Could not open pcap library");
-    let _devices: Vec<InterfaceDescription> = pcap.get_devices().expect("Could not get devices").collect();
-    //funny fact: on travis Linux devices do not have any configured devices but MacOS have
-    //This is why this assertion cannot be checked by default
-    assert!(!_devices.is_empty());
+    if let Some(ifname) = choose_interf(){
+        let mut interf = pcap.open_interface(&ifname).expect("Could not open interface");
+        //on some interfaces there may be no traffic.
+    }
 }
