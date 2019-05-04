@@ -29,6 +29,6 @@ pub struct PFRingDll{
     pfring_close: unsafe extern "C" fn (ring: * mut PFRing),
  	pfring_open: unsafe extern "C" fn (device_name: * const c_char, caplen: u32, flags: u32) -> * mut PFRing,
     pfring_flush_tx_packets: unsafe extern "C" fn (ring: * mut PFRing) -> c_int,
-    pfring_version_noring: unsafe extern "C" fn (version: * mut u32)
-
+    pfring_version_noring: unsafe extern "C" fn (version: * mut u32),
+    pfring_enable_ring: unsafe extern "C" fn (ring: * const PFRing) -> c_int
 }
