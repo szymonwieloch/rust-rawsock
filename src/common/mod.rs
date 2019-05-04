@@ -17,6 +17,16 @@ pub enum DataLink{
     Other
 }
 
+impl Display for DataLink{
+    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
+        match self {
+            DataLink::Ethernet => write!(f, "ethernet"),
+            DataLink::RawIp => write!(f, "raw IP"),
+            DataLink::Other => write!(f, "other")
+        }
+    }
+}
+
 ///Kind of library and its version.
 #[derive(Debug, Clone)]
 pub enum LibraryVersion{

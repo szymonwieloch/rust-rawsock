@@ -58,7 +58,7 @@ impl<'a> Interface<'a> for PCapInterface<'a> {
         }
     }
 
-    fn receive<'b>(&'b mut self) -> Result<BorrowedPacket<'b>, Error>{
+    fn receive(& mut self) -> Result<BorrowedPacket, Error>{
         let mut header: PCapPacketHeader = unsafe {uninitialized()};
         //TODO: replace pcap_next with pcap_next_ex to obtain more error information
         let data = unsafe { self.dll.pcap_next(self.handle, &mut header)};

@@ -2,7 +2,7 @@ extern crate rawsock;
 extern crate interfaces2;
 mod commons;
 use rawsock::{Library, open_best_library};
-use self::commons::{find_first_interface_name, receive_packets};
+use self::commons::{find_first_interface_name, receive_packets, ICMP_PACKET};
 
 fn main() {
 
@@ -18,16 +18,17 @@ fn main() {
     let interf_name = find_first_interface_name();
     println!("Opening the {} interface", interf_name);
     let mut interf = lib.open_interface(&interf_name).expect("Could not open network interface");
+    println!("Interface opened, data link: {}", interf.data_link());
 
     //send some packets
     println!("Sending 5 packets:");
     for i in 0..5{
-        let packet: [u8; 5] = [1*i,2*i,3*i,4*i,5*i];
-        eprintln!("Sending packet {:?}", packet);
-        interf.send(&packet).expect("Could not send packet");
+        println!("Sending ICMP ping packet");
+        interf.send(&ICMP_PACKET).expect("Could not send packet");
     }
 
     //receive some packets.
+    println!("Receiving 5 packets:");
     for _ in 0..5 {
         let packet = interf.receive().expect("Could not receive packet");
         println!("Received packet: {}", packet);
