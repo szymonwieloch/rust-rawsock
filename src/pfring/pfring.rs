@@ -5,8 +5,9 @@ use super::super::err::Error;
 use super::dll::PFRingDll;
 
 #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios"))))]
-pub const DEFAULT_PATHS: [&'static str; 1] = [
-    "libpfring.so"
+pub const DEFAULT_PATHS: [&'static str; 2] = [
+    "libpfring.so",
+    "libpfring.so.1"
 ];
 
 #[cfg(any(windows, target_os = "macos", target_os = "ios"))]
@@ -53,7 +54,7 @@ impl Library for PFRingLibrary {
 }
 
 impl PFRingLibrary {
-    fn open_interface(& self, name: &str) -> Result<PFRingInterface, Error> {
-    PFRingInterface::new(name, &self.dll)
-}
+    pub fn open_interface(& self, name: &str) -> Result<PFRingInterface, Error> {
+        PFRingInterface::new(name, &self.dll)
+    }
 }

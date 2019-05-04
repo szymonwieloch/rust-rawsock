@@ -1,7 +1,9 @@
 use interfaces2::Interface as NetInterf;
-extern crate rawsock;
-use rawsock::Interface;
 
+/*
+This packet has  arbitrary source and destination MAC addresses and you cannot expect any real answer.
+But it is useful for testing purposes since it is actually sent to the local network area.
+*/
 pub const ICMP_PACKET: [u8; 84] = [
 0x45, 0x00, 0x00, 0x54, 0xee, 0x96, 0x40, 0x00, 0x40, 0x01, 0x79, 0xf0, 0xc0, 0xa8, 0x01, 0x6a,
 0x08, 0x08, 0x08, 0x08, 0x08, 0x00, 0x2f, 0x08, 0x66, 0xc2, 0x00, 0x12, 0x82, 0xaa, 0xcc, 0x5c,
@@ -19,12 +21,4 @@ pub fn find_first_interface_name() -> String {
     let first = interfaces.first().expect("There are no network interfaces in your system").name.clone();
     println!("Chosen first interface is: {}", first);
     first
-}
-
-pub fn receive_packets<'a, T>(interf: &mut T) where T: Interface<'a>{
-    println!("Receiving packets:");
-    for i in 1..6{
-        let packet = interf.receive().expect("Error while receiving packet");
-        println!("Packet {} is {}", i, packet);
-    }
 }

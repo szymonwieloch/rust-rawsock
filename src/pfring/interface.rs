@@ -6,7 +6,8 @@ use std::ffi::CString;
 use std::mem::uninitialized;
 use time::Timespec;
 use std::slice::from_raw_parts;
-use libc::c_uint;
+use libc::{c_uint};
+use crate::utils::string_from_errno;
 
 ///pfring version of an interface.
 pub struct PFRingInterface<'a> {
@@ -19,8 +20,7 @@ impl<'a> PFRingInterface<'a>{
         let name = CString::new(name)?;
         let handle = unsafe{dll.pfring_open(name.as_ptr(),1500, 0)};//PF_RING_REENTRANT
         if handle.is_null(){
-            //TODO: obtain error information
-            return Err(Error::OpeningInterface(String::from("Unknown error")))
+            return Err(Error::OpeningInterface(string_from_errno()));
         }
         Ok(Self{
             handle, dll
@@ -37,8 +37,7 @@ impl<'a> Drop for PFRingInterface<'a> {
 impl<'a> Interface<'a> for PFRingInterface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
         if unsafe{self.dll.pfring_send(self.handle, packet.as_ptr(), packet.len() as c_uint, 0)} <0 {
-            //TODO: obtain error
-            Err(Error::SendingPacket(String::from("Unknown Error")))
+            Err(Error::SendingPacket(string_from_errno()))
         } else {
             Ok(())
         }
@@ -48,8 +47,7 @@ impl<'a> Interface<'a> for PFRingInterface<'a> {
         let mut buf: * mut u8 = unsafe{uninitialized()};
         let mut header: PFRingPacketHeader = unsafe{uninitialized()};
         if unsafe{self.dll.pfring_recv(self.handle, &mut buf, 0, &mut header, 1)} != 1 {
-            //TODO: obtain error information
-            Err(Error::ReceivingPacket(String::from("Unknown Error")))
+            Err(Error::ReceivingPacket(string_from_errno()))
         } else {
             let packet = unsafe{from_raw_parts(buf, header.caplen as usize)};
             Ok(BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, (header.ts.tv_usec*1000) as i32), packet))

@@ -62,7 +62,7 @@ impl Library for PCapLibrary {
 }
 
 impl PCapLibrary {
-    fn open_interface(&self, name: & str) -> Result<PCapInterface, Error>{
+    pub fn open_interface(&self, name: & str) -> Result<PCapInterface, Error>{
        PCapInterface::new(name, &self.dll)
     }
 

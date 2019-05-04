@@ -51,7 +51,7 @@ impl Library for WPCapLibrary {
 
 impl WPCapLibrary {
 
-    fn open_interface(& self, name: & str) -> Result<WPCapInterface, Error>{
+    pub fn open_interface(& self, name: & str) -> Result<WPCapInterface, Error>{
         WPCapInterface::new(name, &self.dll)
     }
 }

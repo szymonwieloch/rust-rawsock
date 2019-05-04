@@ -2,7 +2,7 @@ extern crate rawsock;
 extern crate interfaces2;
 mod commons;
 use rawsock::{Library, open_best_library};
-use self::commons::{find_first_interface_name, receive_packets, ICMP_PACKET};
+use self::commons::{find_first_interface_name, ICMP_PACKET};
 
 fn main() {
 
@@ -23,7 +23,7 @@ fn main() {
     //send some packets
     println!("Sending 5 packets:");
     for i in 0..5{
-        println!("Sending ICMP ping packet");
+        println!("Sending ICMP ping packet no {}",i);
         interf.send(&ICMP_PACKET).expect("Could not send packet");
     }
 

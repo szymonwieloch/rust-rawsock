@@ -53,7 +53,7 @@ impl<'a> Packet for BorrowedPacket<'a> {
 impl<'a> Display for BorrowedPacket<'a> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
         for b in self.packet {
-            LowerHex::fmt(b, f);
+            LowerHex::fmt(b, f)?;
         }
         Ok(())
     }
@@ -83,7 +83,7 @@ impl Deref for OwnedPacket {
 impl Display for OwnedPacket {
     fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
         for b in &self.packet {
-            LowerHex::fmt(b, f);
+            LowerHex::fmt(b, f)?;
         }
         Ok(())
     }

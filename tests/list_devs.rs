@@ -1,7 +1,7 @@
 use rawsock::Library;
 use rawsock::pcap::PCapLibrary;
-use rawsock::wpcap::WPCapLibrary;
-use rawsock::pfring::PFRingLibrary;
+//use rawsock::wpcap::WPCapLibrary;
+//use rawsock::pfring::PFRingLibrary;
 use interfaces2::Interface;
 
 /*
@@ -24,7 +24,7 @@ fn choose_interf() -> Option<String>{
 fn open_pcap() {
     let pcap = PCapLibrary::open_default_paths().expect("Could not open pcap library");
     if let Some(ifname) = choose_interf(){
-        let mut interf = pcap.open_interface(&ifname).expect("Could not open interface");
+        let mut _interf = pcap.open_interface(&ifname).expect("Could not open interface");
         //on some interfaces there may be no traffic.
     }
 }

@@ -92,7 +92,7 @@ pub mod pcap;
 pub mod wpcap;
 pub mod pfring;
 mod pcap_common;
-
+mod utils;
 mod err;
 mod common;
 
