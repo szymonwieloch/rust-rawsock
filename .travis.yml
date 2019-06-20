@@ -2,7 +2,7 @@ language: rust
 sudo: true
 cache: cargo
 rust:
-  - 1.31.0
+  - 1.34.0
   - stable
   - nightly
 os:
