@@ -1,5 +1,5 @@
 extern crate rawsock;
-extern crate interfaces2;
+extern crate interfaces;
 mod commons;
 use rawsock::open_best_library;
 use self::commons::{find_first_interface_name, ICMP_PACKET};

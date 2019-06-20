@@ -2,7 +2,7 @@ use rawsock::Library;
 use rawsock::pcap::PCapLibrary;
 //use rawsock::wpcap::WPCapLibrary;
 //use rawsock::pfring::PFRingLibrary;
-use interfaces2::Interface;
+use interfaces::Interface;
 
 /*
 Tests in this module require correctly setup environment. Therefore they are disabled (ignored)

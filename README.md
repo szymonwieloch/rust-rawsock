@@ -1,10 +1,13 @@
 # rust-rawsock
-[![Travis CI][tcii]][tci] [![Crates CI][ccii]][cci]
+[![Travis CI][tcii]][tci] [![Crates CI][ccii]][cci] [![Docs][dcii]][dci]
 
 [tcii]: https://travis-ci.org/szymonwieloch/rust-rawsock.svg?branch=master
 [tci]: https://travis-ci.org/szymonwieloch/rust-rawsock
 [ccii]: https://img.shields.io/crates/v/rawsock.svg
 [cci]: https://crates.io/crates/rawsock
+[dcii]: https://docs.rs/rawsock/badge.svg
+[dci]: https://docs.rs/rawsock
+
 
 # Overview
 **rawsock** is a Rust library that highly simplifies use of packet capturing libraries

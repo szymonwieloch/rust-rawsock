@@ -1,4 +1,4 @@
-use interfaces2::Interface as NetInterf;
+use interfaces::Interface as NetInterf;
 
 /*
 This packet has  arbitrary source and destination MAC addresses and you cannot expect any real answer.

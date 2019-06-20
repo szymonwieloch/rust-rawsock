@@ -24,7 +24,7 @@ time = "0.1"
 errno = "0.2.4"
 
 [dev-dependencies]
-interfaces2 = "0.0.5"
+interfaces = "0.0.4"
 
 [[example]]
 name = "dynamic"
