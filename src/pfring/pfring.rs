@@ -11,7 +11,7 @@ pub const DEFAULT_PATHS: [&'static str; 2] = [
 ];
 
 #[cfg(any(windows, target_os = "macos", target_os = "ios"))]
-pub const DEFAULT_PATHS: [&'static str; 1] = [];
+pub const DEFAULT_PATHS: [&'static str; 0] = [];
 
 
 
