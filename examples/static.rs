@@ -30,9 +30,9 @@ pub fn send_packets<'a, T>(interf: &mut T) where T: Interface<'a> {
 }
 
 fn main () {
-    //run_pcap();
+    run_pcap();
     run_pfring();
-    //run_wpcap();
+    run_wpcap();
 }
 
 fn run_pcap(){

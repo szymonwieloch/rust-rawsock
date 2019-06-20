@@ -12,6 +12,7 @@ pub fn string_from_errno() -> String {
     )
 }
 
+#[allow(dead_code)]
 pub fn string_from_err_code(code: c_int) -> String {
     let corrected = if code <0 {
         -code

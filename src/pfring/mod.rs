@@ -8,6 +8,7 @@ pub use self::pfring::{PFRingLibrary, DEFAULT_PATHS};
 use std::convert::TryFrom;
 use std::mem::transmute;
 
+#[allow(dead_code)]
 #[repr(i32)]
 enum PFRingErrCode{
     Generic = -1,

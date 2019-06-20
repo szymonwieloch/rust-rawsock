@@ -9,7 +9,7 @@ hidden.
 # Main features
 
 * Support of pcap, wpcap (with Windows-specific optimizations), npcap and pfring
-* Libraries are loaded in a dynamic manner, so that the library does not havee any direct
+* Libraries are loaded in a dynamic manner, so that the library does not have any direct
     dependency - it's going to work with whatever is available on the given platform.
 * Consistent API for all packet capturing libraries.
 * Provided wrapper that automatically chooses an implementation available on your platform.
@@ -17,10 +17,11 @@ hidden.
 # Example of a direct use of pcap library
 ```no_run
 extern crate rawsock;
-use rawsock::{PCap, Library, Interface};
+use rawsock::pcap::{PCapLibrary, PCapInterface};
+use rawsock::{Library, Interface};
 
 fn main(){
-    let lib = PCap::open_default_locations().unwrap();
+    let lib = PCapLibrary::open_default_paths().unwrap();
     let mut interf = lib.open_interface("/dev/eth0").unwrap(); //platform specific
     { //This block is required to limit borrowing scope
         let recv_packet = interf.receive().unwrap();
@@ -33,10 +34,10 @@ fn main(){
 #Example use of a automatic wrapper
 ```no_run
 extern crate rawsock;
-use rawsock::{RawLib, Library, Interface};
+use rawsock::open_best_library;
 
 fn main(){
-    let lib = RawLib::open_default_locations().unwrap();
+    let lib = open_best_library().unwrap();
     let mut interf = lib.open_interface("/dev/eth0").unwrap(); //platform specific
     { //This block is required to limit borrowing scope
         let recv_packet = interf.receive().unwrap();
@@ -44,39 +45,6 @@ fn main(){
     }
     let send_packet: [u8; 10] = [0,1,2,3,4,5,6,7,8,9];
     interf.send(&send_packet).unwrap();
-}
-```
-
-#Example implementation using a template and a trait
-```no_run
-extern crate rawsock;
-use rawsock::{PCap, Library, Interface, Error};
-
-struct Sender<L> where L: for<'a> Library<'a> {
-    lib: L
-}
-
-impl<L> Sender<L> where L: for<'a> Library<'a> {
-    pub fn new() -> Result<Self, Error> {
-        Ok(Self{
-            lib: L::open_default_locations()?
-        })
-    }
-
-    pub fn do_something(&self) {
-        // do something complex with the library
-        let interf = self.lib.open_interface("/dev/eth0").unwrap(); //platform specific
-        let packet1: [u8; 10] = [0,1,2,3,4,5,6,7,8,9];
-        let packet2: [u8; 10] = [9,8,7,6,5,4,3,2,1,0];
-        interf.send(&packet1).unwrap();
-        interf.send(&packet2).unwrap();
-    }
-}
-
-fn main(){
-    //you can use WPCap, PFRing or RawLib instead of PCap
-    let sender: Sender<PCap> = Sender::new().unwrap();
-    sender.do_something();
 }
 ```
 
