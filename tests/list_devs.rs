@@ -2,7 +2,7 @@ use rawsock::Library;
 use rawsock::pcap::PCapLibrary;
 //use rawsock::wpcap::WPCapLibrary;
 //use rawsock::pfring::PFRingLibrary;
-use pnet::datalink;
+use get_if_addrs::get_if_addrs;
 
 /*
 Tests in this module require correctly setup environment. Therefore they are disabled (ignored)
@@ -11,10 +11,13 @@ Some tests also may require administrative privileges.
 */
 
 fn choose_interf() -> Option<String>{
-    match datalink::interfaces().first() {
-        Some(i) => Some(i.name.clone()),
-        None => None
-    }
+   match get_if_addrs() {
+       Ok(i) => match i.first(){
+           Some(j) => Some(j.name.clone()),
+           None => None
+       },
+       Err(_) => None
+   }
 }
 
 #[test]

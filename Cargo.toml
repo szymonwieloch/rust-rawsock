@@ -24,7 +24,7 @@ time = "0.1"
 errno = "0.2.4"
 
 [dev-dependencies]
-pnet = "0.22.0"
+get_if_addrs = "0.5.3"
 
 [[example]]
 name = "dynamic"

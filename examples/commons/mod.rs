@@ -1,4 +1,5 @@
-use pnet::datalink;
+use get_if_addrs::get_if_addrs;
+use std::collections::HashSet;
 
 /*
 This packet has  arbitrary source and destination MAC addresses and you cannot expect any real answer.
@@ -14,10 +15,14 @@ pub const ICMP_PACKET: [u8; 84] = [
 
 pub fn find_first_interface_name() -> String {
     println!{"You have the following interfaces available on your platform:"}
-    for interf in datalink::interfaces(){
-        println!("- {}", interf.name)
+    let mut interfs:HashSet<String> = HashSet::new();
+    for ip in get_if_addrs().expect("Could not read network information") {
+        interfs.insert(ip.name.clone());
     }
-    let first = datalink::interfaces().first().expect("There are no interfaces on your platform").name.clone();
+    for interf in &interfs{
+        println!("- {}", interf)
+    }
+    let first = interfs.iter().next().expect("There are no interfaces on your platform").clone();
     println!("Chosen first interface is: {}", first);
     first
 }
