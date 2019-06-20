@@ -24,7 +24,7 @@ time = "0.1"
 errno = "0.2.4"
 
 [dev-dependencies]
-interfaces = "0.0.4"
+pnet = "0.22.0"
 
 [[example]]
 name = "dynamic"

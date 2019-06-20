@@ -2,7 +2,7 @@ use rawsock::Library;
 use rawsock::pcap::PCapLibrary;
 //use rawsock::wpcap::WPCapLibrary;
 //use rawsock::pfring::PFRingLibrary;
-use interfaces::Interface;
+use pnet::datalink;
 
 /*
 Tests in this module require correctly setup environment. Therefore they are disabled (ignored)
@@ -11,11 +11,9 @@ Some tests also may require administrative privileges.
 */
 
 fn choose_interf() -> Option<String>{
-    let interfs = Interface::get_all().expect("Could not obtain interface list");
-    if let Some(i) = interfs.first(){
-        Some(i.name.clone())
-    } else {
-        None
+    match datalink::interfaces().first() {
+        Some(i) => Some(i.name.clone()),
+        None => None
     }
 }
 

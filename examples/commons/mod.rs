@@ -1,4 +1,4 @@
-use interfaces::Interface as NetInterf;
+use pnet::datalink;
 
 /*
 This packet has  arbitrary source and destination MAC addresses and you cannot expect any real answer.
@@ -13,12 +13,11 @@ pub const ICMP_PACKET: [u8; 84] = [
 0x34, 0x35, 0x36, 0x37];
 
 pub fn find_first_interface_name() -> String {
-    let interfaces = NetInterf::get_all().expect("Could not get list of interfaces");
     println!{"You have the following interfaces available on your platform:"}
-    for interf in &interfaces {
+    for interf in datalink::interfaces(){
         println!("- {}", interf.name)
     }
-    let first = interfaces.first().expect("There are no network interfaces in your system").name.clone();
+    let first = datalink::interfaces().first().expect("There are no interfaces on your platform").name.clone();
     println!("Chosen first interface is: {}", first);
     first
 }
