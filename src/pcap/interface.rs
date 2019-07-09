@@ -7,14 +7,14 @@ use time::Timespec;
 use std::slice::from_raw_parts;
 
 ///pcap version of interface.
-pub struct PCapInterface<'a> {
+pub struct Interface<'a> {
     handle: * const PCapHandle,
     dll: & 'a PCapDll,
     datalink: DataLink
 }
 
 
-impl<'a> PCapInterface<'a> {
+impl<'a> Interface<'a> {
     pub fn new(name: &str, dll: &'a PCapDll) ->Result<Self, Error> {
         let name = CString::new(name)?;
         let mut errbuf =  PCapErrBuf::new();
@@ -34,7 +34,7 @@ impl<'a> PCapInterface<'a> {
             _=> DataLink::Other
         };
 
-        Ok(PCapInterface{
+        Ok(Interface {
             dll,
             handle,
             datalink
@@ -42,13 +42,13 @@ impl<'a> PCapInterface<'a> {
     }
 }
 
-impl<'a> Drop for PCapInterface<'a> {
+impl<'a> Drop for Interface<'a> {
     fn drop(&mut self) {
         unsafe { self.dll.pcap_close(self.handle) }
     }
 }
 
-impl<'a> traits::Interface<'a> for PCapInterface<'a> {
+impl<'a> traits::Interface<'a> for Interface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
         if unsafe {self.dll.pcap_sendpacket(self.handle, packet.as_ptr(), packet.len() as c_int)} == SUCCESS {
             Ok(())

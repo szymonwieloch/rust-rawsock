@@ -9,7 +9,7 @@ use std::slice::from_raw_parts;
 const QUEUE_SIZE: usize = 65536 * 8; //min 8 packets
 
 ///wpcap specific Interface representation.
-pub struct WPCapInterface<'a> {
+pub struct Interface<'a> {
     handle: * const PCapHandle,
     dll: & 'a WPCapDll,
     datalink: DataLink,
@@ -17,7 +17,7 @@ pub struct WPCapInterface<'a> {
 }
 
 
-impl<'a> WPCapInterface<'a> {
+impl<'a> Interface<'a> {
     pub fn new(name: &str, dll: &'a WPCapDll) ->Result<Self, Error> {
         let name = CString::new(name)?;
         let mut errbuf =  PCapErrBuf::new();
@@ -39,7 +39,7 @@ impl<'a> WPCapInterface<'a> {
             _=> DataLink::Other
         };
 
-        Ok(WPCapInterface{
+        Ok(Interface {
             dll,
             queue,
             handle,
@@ -48,7 +48,7 @@ impl<'a> WPCapInterface<'a> {
     }
 }
 
-impl<'a> Drop for WPCapInterface<'a> {
+impl<'a> Drop for Interface<'a> {
     fn drop(&mut self) {
         unsafe {
             self.dll.pcap_sendqueue_destroy(self.queue);
@@ -57,7 +57,7 @@ impl<'a> Drop for WPCapInterface<'a> {
     }
 }
 
-impl<'a> traits::Interface<'a> for WPCapInterface<'a> {
+impl<'a> traits::Interface<'a> for Interface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
         let header = PCapPacketHeader {
             len: packet.len() as c_uint,

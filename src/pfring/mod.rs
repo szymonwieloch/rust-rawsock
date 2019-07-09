@@ -1,12 +1,16 @@
+/*!
+Code for managing the *pfring* library.
+*/
+
 mod dll;
 mod interface;
-mod pfring;
+mod library;
 mod paths;
 use libc::c_int;
 
 pub use self::paths::DEFAULT_PATHS;
-pub use self::interface::PFRingInterface;
-pub use self::pfring::PFRingLibrary;
+pub use self::interface::Interface;
+pub use self::library::Library;
 use std::convert::TryFrom;
 use std::mem::transmute;
 

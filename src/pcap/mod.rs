@@ -1,9 +1,13 @@
-mod pcap;
+/*!
+Code for managing the *pcap* library.
+*/
+
+mod library;
 mod dll;
 mod interface;
 mod paths;
 
 
 pub use self::paths::DEFAULT_PATHS;
-pub use self::pcap::PCapLibrary;
-pub use self::interface::PCapInterface;
+pub use self::library::Library;
+pub use self::interface::Interface;

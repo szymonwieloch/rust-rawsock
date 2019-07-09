@@ -1,8 +1,12 @@
+/*!
+Code for managing the *wpcap* library (Windows extension to pcap).
+*/
+
 mod dll;
 mod interface;
-mod wpcap;
+mod library;
 mod paths;
 
 pub use self::paths::DEFAULT_PATHS;
-pub use self::wpcap::WPCapLibrary;
-pub use self::interface::WPCapInterface;
+pub use self::library::Library;
+pub use self::interface::Interface;

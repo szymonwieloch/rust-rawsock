@@ -1,7 +1,5 @@
 use rawsock::traits::Library;
-use rawsock::pcap::PCapLibrary;
-//use rawsock::wpcap::WPCapLibrary;
-//use rawsock::pfring::PFRingLibrary;
+use rawsock::pcap;
 use get_if_addrs::get_if_addrs;
 
 /*
@@ -23,7 +21,7 @@ fn choose_interf() -> Option<String>{
 #[test]
 #[ignore]
 fn open_pcap() {
-    let pcap = PCapLibrary::open_default_paths().expect("Could not open pcap library");
+    let pcap = pcap::Library::open_default_paths().expect("Could not open pcap library");
     if let Some(ifname) = choose_interf(){
         let mut _interf = pcap.open_interface(&ifname).expect("Could not open interface");
         //on some interfaces there may be no traffic.

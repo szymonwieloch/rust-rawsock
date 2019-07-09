@@ -1,9 +1,7 @@
 mod packet;
 pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
 pub use crate::traits::{Library, Interface};
-use crate::pcap::PCapLibrary;
-use crate::pfring::PFRingLibrary;
-use crate::wpcap::WPCapLibrary;
+use crate::{wpcap, pcap, pfring};
 use std::fmt::{Display, Formatter, Error as FmtError};
 
 use super::err::Error;
@@ -46,13 +44,13 @@ impl Display for LibraryVersion {
 
 
 pub fn open_best_library() -> Result<Box<dyn Library>, Error> {
-    if let Ok(l) = PFRingLibrary::open_default_paths() {
+    if let Ok(l) = pfring::Library::open_default_paths() {
         return Ok(Box::new(l));
     }
-    if let Ok(l) = WPCapLibrary::open_default_paths() {
+    if let Ok(l) = wpcap::Library::open_default_paths() {
         return Ok(Box::new(l));
     }
-    match PCapLibrary::open_default_paths() {
+    match pcap::Library::open_default_paths() {
         Ok(l) => Ok(Box::new(l)),
         Err(e) => Err(e)
     }

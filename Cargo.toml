@@ -17,8 +17,8 @@ branch = "master"
 repository = "szymonwieloch/rust-rawsock"
 
 [dependencies]
-dlopen = "0.1.6"
-dlopen_derive = "0.1.0"
+dlopen = "0.1.7"
+dlopen_derive = "0.1.4"
 libc = "0.2.29"
 time = "0.1"
 errno = "0.2.4"

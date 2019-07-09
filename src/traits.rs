@@ -1,3 +1,7 @@
+/*!
+Common traits for all libraries.
+*/
+
 use crate::err::Error;
 use super::{BorrowedPacket, DataLink, LibraryVersion};
 use std::iter::IntoIterator;

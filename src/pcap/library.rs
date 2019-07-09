@@ -1,18 +1,20 @@
 use crate::{LibraryVersion, traits};
-use super::dll::WPCapDll;
+use super::dll::PCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
-use super::interface::WPCapInterface;
+use super::interface::Interface;
 use std::ffi::CStr;
 use super::paths::DEFAULT_PATHS;
 
 
 
-pub struct WPCapLibrary {
-    dll: Container<WPCapDll>
+
+///Instance of a opened pcap library.
+pub struct Library {
+    dll: Container<PCapDll>
 }
 
-impl traits::Library for WPCapLibrary {
+impl traits::Library for Library {
     fn default_paths() -> &'static [&'static str] where Self: Sized {
         &DEFAULT_PATHS
     }
@@ -20,7 +22,7 @@ impl traits::Library for WPCapLibrary {
     //const DEFAULT_PATHS: &'static [&'static str] = &POSSIBLE_NAMES;
 
     fn open(path: &str) -> Result<Self, Error> {
-        let dll: Container<WPCapDll> = unsafe { Container::load(path)}?;
+        let dll: Container<PCapDll> = unsafe { Container::load(path)}?;
         Ok(Self {
             dll
         })
@@ -34,13 +36,14 @@ impl traits::Library for WPCapLibrary {
     }
 
     fn version(&self) -> LibraryVersion {
-        LibraryVersion::WPCap(unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned())
+        LibraryVersion::PCap(unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned())
     }
 }
 
-impl WPCapLibrary {
-
-    pub fn open_interface(& self, name: & str) -> Result<WPCapInterface, Error>{
-        WPCapInterface::new(name, &self.dll)
+impl Library {
+    pub fn open_interface(&self, name: & str) -> Result<Interface, Error>{
+       Interface::new(name, &self.dll)
     }
+
 }
+

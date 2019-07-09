@@ -1,5 +1,5 @@
 use crate::{LibraryVersion, traits};
-use super::interface::PFRingInterface;
+use super::interface::Interface;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::dll::PFRingDll;
@@ -10,13 +10,13 @@ use super::paths::DEFAULT_PATHS;
 
 
 ///Instance of a opened pfring library.
-pub struct PFRingLibrary {
+pub struct Library {
     dll: Container<PFRingDll>
 }
 
 
 
-impl traits::Library for PFRingLibrary {
+impl traits::Library for Library {
     fn default_paths() -> &'static [&'static str] where Self: Sized {
         &DEFAULT_PATHS
     }
@@ -47,8 +47,8 @@ impl traits::Library for PFRingLibrary {
     }
 }
 
-impl PFRingLibrary {
-    pub fn open_interface(& self, name: &str) -> Result<PFRingInterface, Error> {
-        PFRingInterface::new(name, &self.dll)
+impl Library {
+    pub fn open_interface(& self, name: &str) -> Result<Interface, Error> {
+        Interface::new(name, &self.dll)
     }
 }
