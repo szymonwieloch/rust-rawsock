@@ -1,10 +1,12 @@
 mod dll;
 mod interface;
 mod pfring;
+mod paths;
 use libc::c_int;
 
+pub use self::paths::DEFAULT_PATHS;
 pub use self::interface::PFRingInterface;
-pub use self::pfring::{PFRingLibrary, DEFAULT_PATHS};
+pub use self::pfring::PFRingLibrary;
 use std::convert::TryFrom;
 use std::mem::transmute;
 

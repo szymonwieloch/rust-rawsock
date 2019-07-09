@@ -3,15 +3,9 @@ use super::interface::PFRingInterface;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
 use super::dll::PFRingDll;
+use super::paths::DEFAULT_PATHS;
 
-#[cfg(all(unix, not(any(target_os = "macos", target_os = "ios"))))]
-pub const DEFAULT_PATHS: [&'static str; 2] = [
-    "libpfring.so",
-    "libpfring.so.1"
-];
 
-#[cfg(any(windows, target_os = "macos", target_os = "ios"))]
-pub const DEFAULT_PATHS: [&'static str; 0] = [];
 
 
 
