@@ -1,7 +1,6 @@
 mod packet;
-mod traits;
 pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
-pub use self::traits::{Library, Interface};
+pub use crate::traits::{Library, Interface};
 use crate::pcap::PCapLibrary;
 use crate::pfring::PFRingLibrary;
 use crate::wpcap::WPCapLibrary;

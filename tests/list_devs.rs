@@ -1,4 +1,4 @@
-use rawsock::Library;
+use rawsock::traits::Library;
 use rawsock::pcap::PCapLibrary;
 //use rawsock::wpcap::WPCapLibrary;
 //use rawsock::pfring::PFRingLibrary;

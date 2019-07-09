@@ -1,4 +1,4 @@
-use crate::{Library, Interface, LibraryVersion};
+use crate::{LibraryVersion, traits};
 use super::dll::WPCapDll;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -12,7 +12,7 @@ pub struct WPCapLibrary {
     dll: Container<WPCapDll>
 }
 
-impl Library for WPCapLibrary {
+impl traits::Library for WPCapLibrary {
     fn default_paths() -> &'static [&'static str] where Self: Sized {
         &DEFAULT_PATHS
     }
@@ -22,13 +22,13 @@ impl Library for WPCapLibrary {
     fn open(path: &str) -> Result<Self, Error> {
         let dll: Container<WPCapDll> = unsafe { Container::load(path)}?;
         Ok(Self {
-            dll: dll
+            dll
         })
     }
 
-    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<Interface<'a> +'a>, Error> {
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<traits::Interface<'a> +'a>, Error> {
         match self.open_interface(name){
-            Ok(interf) => Ok(Box::new(interf) as Box<Interface>),
+            Ok(interf) => Ok(Box::new(interf) as Box<traits::Interface>),
             Err(e) => Err(e)
         }
     }

@@ -1,5 +1,5 @@
 use std::ffi::{CStr, CString};
-use super::super::{Error,  BorrowedPacket, Interface, DataLink};
+use crate::{Error,  BorrowedPacket, DataLink, traits};
 use super::dll::{PCapHandle, PCapDll, SUCCESS, PCapPacketHeader, PCapErrBuf};
 use libc::{ c_int};
 use std::mem::uninitialized;
@@ -48,7 +48,7 @@ impl<'a> Drop for PCapInterface<'a> {
     }
 }
 
-impl<'a> Interface<'a> for PCapInterface<'a> {
+impl<'a> traits::Interface<'a> for PCapInterface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
         if unsafe {self.dll.pcap_sendpacket(self.handle, packet.as_ptr(), packet.len() as c_int)} == SUCCESS {
             Ok(())

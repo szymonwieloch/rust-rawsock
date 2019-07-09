@@ -59,10 +59,11 @@ extern crate time;
 pub mod pcap;
 pub mod wpcap;
 pub mod pfring;
+pub mod traits;
 mod pcap_common;
 mod utils;
 mod err;
 mod common;
 
-pub use self::common::{Packet, Interface, Library, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library};
+pub use self::common::{Packet, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library};
 pub use self::err::Error;

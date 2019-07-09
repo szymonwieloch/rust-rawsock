@@ -1,5 +1,5 @@
 extern crate rawsock;
-use rawsock::{Interface, Library};
+use rawsock::traits::{Interface, Library};
 use rawsock::wpcap::WPCapLibrary;
 use rawsock::pcap::PCapLibrary;
 use rawsock::pfring::PFRingLibrary;

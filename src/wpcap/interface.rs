@@ -1,5 +1,5 @@
 use std::ffi::{CStr, CString};
-use super::super::{Error,  BorrowedPacket, Interface, DataLink};
+use crate::{Error,  BorrowedPacket, DataLink, traits};
 use super::dll::{PCapHandle, WPCapDll, SUCCESS, PCapPacketHeader, PCapErrBuf, PCapSendQueue};
 use libc::{ c_int, c_uint};
 use std::mem::uninitialized;
@@ -57,7 +57,7 @@ impl<'a> Drop for WPCapInterface<'a> {
     }
 }
 
-impl<'a> Interface<'a> for WPCapInterface<'a> {
+impl<'a> traits::Interface<'a> for WPCapInterface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
         let header = PCapPacketHeader {
             len: packet.len() as c_uint,

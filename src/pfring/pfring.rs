@@ -1,4 +1,4 @@
-use crate::{Library, Interface, LibraryVersion};
+use crate::{LibraryVersion, traits};
 use super::interface::PFRingInterface;
 use dlopen::wrapper::Container;
 use super::super::err::Error;
@@ -16,7 +16,7 @@ pub struct PFRingLibrary {
 
 
 
-impl Library for PFRingLibrary {
+impl traits::Library for PFRingLibrary {
     fn default_paths() -> &'static [&'static str] where Self: Sized {
         &DEFAULT_PATHS
     }
@@ -30,9 +30,9 @@ impl Library for PFRingLibrary {
         })
     }
 
-    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<Interface<'a> +'a>, Error> {
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<traits::Interface<'a> +'a>, Error> {
         match self.open_interface(name){
-            Ok(interf) => Ok(Box::new(interf) as Box<Interface>),
+            Ok(interf) => Ok(Box::new(interf) as Box<traits::Interface>),
             Err(e) => Err(e)
         }
     }
