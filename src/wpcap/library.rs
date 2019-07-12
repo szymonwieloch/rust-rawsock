@@ -5,6 +5,11 @@ use super::super::err::Error;
 use super::interface::Interface;
 use std::ffi::CStr;
 use super::paths::DEFAULT_PATHS;
+use crate::pcap_common::{PCapErrBuf, PCapInterface, SUCCESS};
+use std::ptr::null;
+use crate::common::InterfaceData;
+use crate::utils::cstr_to_string;
+use crate::pcap_common::interface_data_from_pcap_list;
 
 
 
@@ -42,5 +47,17 @@ impl Library {
 
     pub fn open_interface(& self, name: & str) -> Result<Interface, Error>{
         Interface::new(name, &self.dll)
+    }
+
+    pub fn all_interfaces(& self) -> Result<Vec<InterfaceData>, Error>{
+        let mut interfs: * const PCapInterface = null();
+        let mut errbuf = PCapErrBuf::new();
+        if SUCCESS !=  unsafe {self.dll.pcap_findalldevs(&interfs, errbuf.buffer())} {
+            return Err(Error::GettingDeviceDescriptionList(errbuf.as_string()))
+        }
+       let interf_datas = interface_data_from_pcap_list(interfs);
+
+        unsafe {self.dll.pcap_freealldevs(interfs)}
+        Ok(interf_datas)
     }
 }

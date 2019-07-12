@@ -55,3 +55,8 @@ pub fn open_best_library() -> Result<Box<dyn Library>, Error> {
         Err(e) => Err(e)
     }
 }
+
+pub struct InterfaceData {
+    pub name: String,
+    pub description: String
+}

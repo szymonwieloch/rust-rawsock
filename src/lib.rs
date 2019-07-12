@@ -17,11 +17,11 @@ hidden.
 # Example of a direct use of pcap library
 ```no_run
 extern crate rawsock;
-use rawsock::pcap::{PCapLibrary, PCapInterface};
-use rawsock::{Library, Interface};
+use rawsock::pcap;
+use rawsock::traits::{Library, Interface};
 
 fn main(){
-    let lib = PCapLibrary::open_default_paths().unwrap();
+    let lib = pcap::Library::open_default_paths().unwrap();
     let mut interf = lib.open_interface("/dev/eth0").unwrap(); //platform specific
     { //This block is required to limit borrowing scope
         let recv_packet = interf.receive().unwrap();

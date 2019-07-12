@@ -5,6 +5,9 @@ use super::super::err::Error;
 use super::interface::Interface;
 use std::ffi::CStr;
 use super::paths::DEFAULT_PATHS;
+use crate::common::InterfaceData;
+use crate::pcap_common::{interface_data_from_pcap_list, PCapInterface, PCapErrBuf, SUCCESS};
+use std::ptr::null;
 
 
 
@@ -43,6 +46,18 @@ impl traits::Library for Library {
 impl Library {
     pub fn open_interface(&self, name: & str) -> Result<Interface, Error>{
        Interface::new(name, &self.dll)
+    }
+
+    pub fn all_interfaces(& self) -> Result<Vec<InterfaceData>, Error>{
+        let mut interfs: * const PCapInterface = null();
+        let mut errbuf = PCapErrBuf::new();
+        if SUCCESS !=  unsafe {self.dll.pcap_findalldevs(&interfs, errbuf.buffer())} {
+            return Err(Error::GettingDeviceDescriptionList(errbuf.as_string()))
+        }
+        let interf_datas = interface_data_from_pcap_list(interfs);
+
+        unsafe {self.dll.pcap_freealldevs(interfs)}
+        Ok(interf_datas)
     }
 
 }

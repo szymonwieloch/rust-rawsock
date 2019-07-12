@@ -3,6 +3,9 @@ use libc::{c_char, strerror, c_int};
 use errno::errno;
 
 pub fn cstr_to_string(txt: * const c_char) -> String {
+    if txt.is_null() {
+        return String::new()
+    }
     unsafe { CStr::from_ptr(txt) }.to_string_lossy().into_owned()
 }
 
