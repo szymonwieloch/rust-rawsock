@@ -65,5 +65,5 @@ mod utils;
 mod err;
 mod common;
 
-pub use self::common::{Packet, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library};
+pub use self::common::{Packet, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library, InterfaceData};
 pub use self::err::Error;

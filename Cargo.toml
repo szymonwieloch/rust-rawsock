@@ -31,3 +31,6 @@ name = "dynamic"
 
 [[example]]
 name = "static"
+
+[[example]]
+name = "list_interfs"
