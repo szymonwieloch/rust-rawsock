@@ -51,7 +51,7 @@ impl Library {
     pub fn all_interfaces(& self) -> Result<Vec<InterfaceData>, Error>{
         let mut interfs: * const PCapInterface = null();
         let mut errbuf = PCapErrBuf::new();
-        if SUCCESS !=  unsafe {self.dll.pcap_findalldevs(&interfs, errbuf.buffer())} {
+        if SUCCESS !=  unsafe {self.dll.pcap_findalldevs(&mut interfs, errbuf.buffer())} {
             return Err(Error::GettingDeviceDescriptionList(errbuf.as_string()))
         }
         let interf_datas = interface_data_from_pcap_list(interfs);

@@ -19,7 +19,7 @@ pub struct PCapDll{
     pcap_datalink: unsafe extern "C" fn (handle: * const PCapHandle) -> c_int,
     pcap_lib_version: unsafe extern "C" fn() -> * const c_char,
     //devices
-    pcap_findalldevs: unsafe extern "C" fn (alldevsp: * const * const PCapInterface, errbuf: * const c_char) -> c_int,
+    pcap_findalldevs: unsafe extern "C" fn (alldevsp: * mut * const PCapInterface, errbuf: * const c_char) -> c_int,
     pcap_freealldevs: unsafe extern "C" fn (alldevs: * const PCapInterface),
 
 }
