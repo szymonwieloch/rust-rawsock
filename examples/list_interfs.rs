@@ -1,3 +1,9 @@
+/*!
+    Sometimes you don't know the interfaces available on the given machine and you need a list of hem.
+    This functionality is only available in pcap and wpcap implementations.
+    pfring library does not support it.
+*/
+
 extern crate rawsock;
 use rawsock::traits::{Library, PcapLibrary};
 use rawsock::{wpcap, pcap};

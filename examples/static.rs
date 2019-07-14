@@ -1,3 +1,8 @@
+/**
+    Some application may require direct use of a concrete library.
+    In tis case you should declare type of your library directly.
+*/
+
 extern crate rawsock;
 use rawsock::traits::{Interface, Library};
 use rawsock::{wpcap, pcap, pfring};

@@ -1,3 +1,11 @@
+/*!
+    This example shows automatic choosing of the best underlying library available on your system
+    and dynamic dispatch of calls to the right implementation.
+    To the user is is unknown if the pcap or wpcap or pfring library is chosen.
+
+    For most applications this is the recommended approach.
+*/
+
 extern crate rawsock;
 extern crate get_if_addrs;
 mod commons;
@@ -5,13 +13,6 @@ use rawsock::open_best_library;
 use self::commons::{find_first_interface_name, ICMP_PACKET};
 
 fn main() {
-
-    /*
-    This example shows automatic choosing of the best underlying library available on your system
-    and dynamic dispatch of calls to the right implementation.
-
-    For most applications this is the recommended approach.
-    */
     println!("Opening packet capturing library");
     let lib = open_best_library().expect("Could not open any packet capturing library");
     println!("Library opened, version is {}", lib.version());
