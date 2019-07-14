@@ -1,7 +1,7 @@
 use crate::{LibraryVersion, traits};
 use super::interface::Interface;
 use dlopen::wrapper::Container;
-use super::super::err::Error;
+use crate::Error;
 use super::dll::PFRingDll;
 use super::paths::DEFAULT_PATHS;
 

@@ -1,48 +1,37 @@
 mod packet;
-pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
-pub use crate::traits::{Library, Interface};
+mod lib_version;
+mod interf_desc;
+mod data_link;
+mod err;
+
+use crate::traits::Library;
 use crate::{wpcap, pcap, pfring};
-use std::fmt::{Display, Formatter, Error as FmtError};
 
-use super::err::Error;
 
-///Kind of data link - protocol used below the surface.
-#[derive(Debug, Copy, Clone)]
-pub enum DataLink{
-    Ethernet,
-    RawIp,
-    Other
+pub use self::lib_version::LibraryVersion;
+pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
+pub use self::interf_desc::InterfaceDescription;
+pub use self::data_link::DataLink;
+pub use self::err::Error;
+
+
+
+/**
+Opens optimal library available on the platform.
+
+# Example
+
+```no_run
+extern crate rawsock;
+use rawsock::open_best_library;
+
+fn main(){
+    let lib = open_best_library().expect("Could not open any library.");
+
+    // do something with the library
 }
-
-impl Display for DataLink{
-    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
-        match self {
-            DataLink::Ethernet => write!(f, "ethernet"),
-            DataLink::RawIp => write!(f, "raw IP"),
-            DataLink::Other => write!(f, "other")
-        }
-    }
-}
-
-///Kind of library and its version.
-#[derive(Debug, Clone)]
-pub enum LibraryVersion{
-    PCap(String),
-    WPCap(String),
-    PFRing(String)
-}
-
-impl Display for LibraryVersion {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
-        match self {
-            LibraryVersion::PCap(ver) => write!(f, " pcap {}", ver),
-            LibraryVersion::WPCap(ver) => write!(f, "wpcap {}", ver),
-            LibraryVersion::PFRing(ver) => write!(f, "pfring {}", ver)
-        }
-    }
-}
-
-
+```
+*/
 pub fn open_best_library() -> Result<Box<dyn Library>, Error> {
     if let Ok(l) = pfring::Library::open_default_paths() {
         return Ok(Box::new(l));
@@ -56,7 +45,3 @@ pub fn open_best_library() -> Result<Box<dyn Library>, Error> {
     }
 }
 
-pub struct InterfaceData {
-    pub name: String,
-    pub description: String
-}

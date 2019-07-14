@@ -4,6 +4,7 @@ use std::convert::From;
 use dlopen::Error as DlopenError;
 use std::ffi::NulError;
 
+/// Error enumeration returned by this crate.
 #[derive(Debug)]
 pub enum Error {
     DllError(DlopenError),

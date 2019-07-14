@@ -1,7 +1,7 @@
 extern crate rawsock;
 use rawsock::traits::Library;
 use rawsock::{wpcap, pcap};
-use rawsock::InterfaceData;
+use rawsock::InterfaceDescription;
 
 fn open_library<T>() -> T where T: Library {
     let lib = T::open_default_paths().expect("Could not open library");
@@ -9,7 +9,7 @@ fn open_library<T>() -> T where T: Library {
     lib
 }
 
-fn print_interfaces(interfs: Vec<InterfaceData>){
+fn print_interfaces(interfs: Vec<InterfaceDescription>){
     println!("Found interfaces:");
     for (num, interf) in interfs.iter().enumerate() {
         println!("{}: {}, {}", num, interf.name, interf.description);

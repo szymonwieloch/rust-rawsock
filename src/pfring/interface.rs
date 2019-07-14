@@ -1,6 +1,6 @@
 use crate::{BorrowedPacket, DataLink, traits};
 use super::dll::{PFRing, PFRingDll, PFRingPacketHeader};
-use crate::err::Error;
+use crate::Error;
 use dlopen::wrapper::Container;
 use std::ffi::CString;
 use std::mem::uninitialized;

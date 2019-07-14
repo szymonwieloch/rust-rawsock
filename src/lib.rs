@@ -81,8 +81,6 @@ pub mod pfring;
 pub mod traits;
 mod pcap_common;
 mod utils;
-mod err;
 mod common;
 
-pub use self::common::{Packet, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library, InterfaceData};
-pub use self::err::Error;
+pub use self::common::{Packet, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library, InterfaceDescription, Error};

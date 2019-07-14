@@ -1,7 +1,7 @@
 use std::ffi::{CStr};
 use libc::{c_char, c_void, c_uint, c_int, c_long};
 use std::mem::uninitialized;
-use crate::common::InterfaceData;
+use crate::common::InterfaceDescription;
 use crate::utils::cstr_to_string;
 
 pub const ERRBUF_SIZE: usize = 256; //taken from header, is it platform independent?
@@ -71,11 +71,11 @@ pub enum PCapDirection {
     Out      = 2,
 }*/
 
-pub fn interface_data_from_pcap_list(interfs: * const PCapInterface) -> Vec<InterfaceData> {
+pub fn interface_data_from_pcap_list(interfs: * const PCapInterface) -> Vec<InterfaceDescription> {
     let mut interfs_descr = Vec::new();
     let mut curr = interfs;
     while !curr.is_null() {
-        let id = InterfaceData {
+        let id = InterfaceDescription {
             name: cstr_to_string(unsafe{(*curr).name}),
             description: cstr_to_string(unsafe{(*curr).description})
         };

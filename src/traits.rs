@@ -2,7 +2,7 @@
 Common traits for all libraries.
 */
 
-use crate::err::Error;
+use crate::Error;
 use super::{BorrowedPacket, DataLink, LibraryVersion};
 use std::iter::IntoIterator;
 

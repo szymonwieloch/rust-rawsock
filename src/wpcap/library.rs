@@ -1,17 +1,17 @@
 use crate::{LibraryVersion, traits};
 use super::dll::WPCapDll;
 use dlopen::wrapper::Container;
-use super::super::err::Error;
+use crate::Error;
 use super::interface::Interface;
 use std::ffi::CStr;
 use super::paths::DEFAULT_PATHS;
 use crate::pcap_common::{PCapErrBuf, PCapInterface, SUCCESS};
 use std::ptr::null;
-use crate::common::InterfaceData;
+use crate::common::InterfaceDescription;
 use crate::pcap_common::interface_data_from_pcap_list;
 
 
-
+///Instance of a opened wpcap library.
 pub struct Library {
     dll: Container<WPCapDll>
 }
@@ -48,7 +48,7 @@ impl Library {
         Interface::new(name, &self.dll)
     }
 
-    pub fn all_interfaces(& self) -> Result<Vec<InterfaceData>, Error>{
+    pub fn all_interfaces(& self) -> Result<Vec<InterfaceDescription>, Error>{
         let mut interfs: * const PCapInterface = null();
         let mut errbuf = PCapErrBuf::new();
         if SUCCESS !=  unsafe {self.dll.pcap_findalldevs(&mut interfs, errbuf.buffer())} {

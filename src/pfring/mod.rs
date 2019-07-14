@@ -64,7 +64,7 @@ impl PFRingErrCode {
 }
 
 
-pub fn string_from_pfring_err_code(err_code: c_int) -> String {
+fn string_from_pfring_err_code(err_code: c_int) -> String {
     if let Ok(err) = PFRingErrCode::try_from(err_code){
         String::from(err.to_description())
     } else {
