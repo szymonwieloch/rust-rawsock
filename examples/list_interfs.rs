@@ -1,5 +1,5 @@
 extern crate rawsock;
-use rawsock::traits::Library;
+use rawsock::traits::{Library, PcapLibrary};
 use rawsock::{wpcap, pcap};
 use rawsock::InterfaceDescription;
 

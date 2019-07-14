@@ -2,8 +2,7 @@
 Common traits for all libraries.
 */
 
-use crate::Error;
-use super::{BorrowedPacket, DataLink, LibraryVersion};
+use crate::{BorrowedPacket, DataLink, LibraryVersion, Error, InterfaceDescription};
 use std::iter::IntoIterator;
 
 
@@ -63,4 +62,10 @@ pub trait Library{
 
     ///Returns library version
     fn version(&self) -> LibraryVersion;
+}
+
+/// Trait for pcap and wpcap libraries that share common extension methods.
+pub trait PcapLibrary : Library{
+    /// Obtains information about network interfaces available on this platform.
+    fn all_interfaces(&self) -> Result<Vec<InterfaceDescription>, Error>;
 }

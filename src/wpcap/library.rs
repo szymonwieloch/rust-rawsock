@@ -42,21 +42,23 @@ impl traits::Library for Library {
     }
 }
 
-impl Library {
-
-    pub fn open_interface(& self, name: & str) -> Result<Interface, Error>{
-        Interface::new(name, &self.dll)
-    }
-
-    pub fn all_interfaces(& self) -> Result<Vec<InterfaceDescription>, Error>{
+impl traits::PcapLibrary for Library{
+    fn all_interfaces(&self) -> Result<Vec<InterfaceDescription>, Error> {
         let mut interfs: * const PCapInterface = null();
         let mut errbuf = PCapErrBuf::new();
         if SUCCESS !=  unsafe {self.dll.pcap_findalldevs(&mut interfs, errbuf.buffer())} {
             return Err(Error::GettingDeviceDescriptionList(errbuf.as_string()))
         }
-       let interf_datas = interface_data_from_pcap_list(interfs);
+        let interf_datas = interface_data_from_pcap_list(interfs);
 
         unsafe {self.dll.pcap_freealldevs(interfs)}
         Ok(interf_datas)
+    }
+}
+
+impl Library {
+
+    pub fn open_interface(& self, name: & str) -> Result<Interface, Error>{
+        Interface::new(name, &self.dll)
     }
 }
