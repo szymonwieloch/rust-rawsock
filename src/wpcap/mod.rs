@@ -2,7 +2,7 @@
 Code for managing the *wpcap* library (Windows extension to pcap).
 */
 
-mod dll;
+pub mod dll;
 mod interface;
 mod library;
 mod paths;

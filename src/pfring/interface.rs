@@ -8,7 +8,7 @@ use time::Timespec;
 use std::slice::from_raw_parts;
 use libc::{c_uint};
 use crate::utils::string_from_errno;
-use super::string_from_pfring_err_code;
+use super::dll::helpers::string_from_pfring_err_code;
 
 ///pfring version of an interface.
 pub struct Interface<'a> {

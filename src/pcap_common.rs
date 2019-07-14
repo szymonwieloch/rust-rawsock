@@ -5,7 +5,9 @@ use crate::common::InterfaceDescription;
 use crate::utils::cstr_to_string;
 
 pub const ERRBUF_SIZE: usize = 256; //taken from header, is it platform independent?
+///Raw PCap handle - created only to allow construction of pointers.
 pub enum PCapHandle {}
+/// Value returned by pcap library to indicate successful operation.
 pub const SUCCESS: c_int = 0;
 
 
@@ -48,8 +50,9 @@ pub struct PCapInterface {
 
 ///Equivalent of C struct pcap_pkthdr
 #[repr(C)]
+#[derive(Copy, Clone, Debug)]
 pub struct PCapPacketHeader {
-    pub ts: PCapTimeVal,
+    pub ts: TimeVal,
     pub caplen: c_uint,
     pub len: c_uint,
     //some documentation suggest that this additional field should be present on MAC os.
@@ -60,7 +63,8 @@ pub struct PCapPacketHeader {
 
 ///Equivalent of C struct timeval_t
 #[repr(C)]
-pub struct PCapTimeVal {
+#[derive(Copy, Clone, Debug)]
+pub struct TimeVal {
     pub tv_sec: c_long,         /* seconds */
     pub tv_usec: c_long        /* and microseconds */
 }

@@ -1,6 +1,16 @@
+/*!
+Contains definitions of C-structures and functions.
+This is basicly the equivalent of C language header.
+*/
+
 use dlopen::wrapper::WrapperApi;
 use libc::{c_char, c_uint, c_int};
-pub use super::super::pcap_common::{PCapErrBuf, SUCCESS, PCapHandle, PCapPacketHeader, PCapTimeVal, PCapInterface};
+pub use super::super::pcap_common::{SUCCESS, PCapHandle, PCapPacketHeader, TimeVal, PCapInterface};
+
+/// Code hat helps you use the original DLL API.
+pub mod helpers {
+    pub use crate::pcap_common::PCapErrBuf;
+}
 
 ///Equivalent of C struct pcap_sendqueue_t
 #[repr(C)]

@@ -5,7 +5,13 @@ This is basicly the equivalent of C language header.
 
 use dlopen::wrapper::WrapperApi;
 use libc::{c_char, c_uint, c_int};
-pub use super::super::pcap_common::{PCapErrBuf, SUCCESS, PCapHandle, PCapPacketHeader, PCapTimeVal, PCapInterface};
+
+/// Code hat helps you use the original DLL API.
+pub mod helpers {
+    pub use crate::pcap_common::PCapErrBuf;
+}
+
+pub use crate::pcap_common::{SUCCESS, PCapHandle, PCapPacketHeader, TimeVal, PCapInterface};
 
 ///Dynamic link library interface for pcap.so
 #[derive(WrapperApi)]

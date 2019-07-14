@@ -3,7 +3,7 @@ Code for managing the *pcap* library.
 */
 
 mod library;
-mod dll;
+pub mod dll;
 mod interface;
 mod paths;
 

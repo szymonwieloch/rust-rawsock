@@ -1,6 +1,6 @@
 [package]
 name = "rawsock"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2018"
 authors = ["Szymon Wieloch <szymon.wieloch@gmail.com>"]
 description = "Library for receiving and sending raw packets. While most crate wrap just one library, rawsock allows you to use pcap, wpcap, npcap and pf_ring using a consistent API for all of them."

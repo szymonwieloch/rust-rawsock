@@ -1,6 +1,7 @@
 use std::ffi::{CStr, CString};
 use crate::{Error,  BorrowedPacket, DataLink, traits};
-use super::dll::{PCapHandle, PCapDll, SUCCESS, PCapPacketHeader, PCapErrBuf};
+use super::dll::{PCapHandle, PCapDll, SUCCESS, PCapPacketHeader};
+use super::dll::helpers::PCapErrBuf;
 use libc::{ c_int};
 use std::mem::uninitialized;
 use time::Timespec;
