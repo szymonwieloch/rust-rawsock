@@ -40,9 +40,7 @@ impl traits::Library for Library {
     fn version(&self) -> LibraryVersion {
         LibraryVersion::WPCap(unsafe{CStr::from_ptr(self.dll.pcap_lib_version())}.to_string_lossy().into_owned())
     }
-}
 
-impl traits::PcapLibrary for Library{
     fn all_interfaces(&self) -> Result<Vec<InterfaceDescription>, Error> {
         let mut interfs: * const PCapInterface = null();
         let mut errbuf = PCapErrBuf::new();

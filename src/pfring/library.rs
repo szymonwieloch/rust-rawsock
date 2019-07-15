@@ -1,12 +1,10 @@
-use crate::{LibraryVersion, traits};
+use crate::{LibraryVersion, traits, InterfaceDescription};
 use super::interface::Interface;
 use dlopen::wrapper::Container;
 use crate::Error;
 use super::dll::PFRingDll;
 use super::paths::DEFAULT_PATHS;
-
-
-
+use crate::utils::cstr_to_string;
 
 
 ///Instance of a opened pfring library.
@@ -35,6 +33,25 @@ impl traits::Library for Library {
             Ok(interf) => Ok(Box::new(interf) as Box<traits::Interface>),
             Err(e) => Err(e)
         }
+    }
+
+    fn all_interfaces(&self) -> Result<Vec<InterfaceDescription>, Error> {
+        let interfs = unsafe{self.dll.pfring_findalldevs()};
+        let mut curr = interfs;
+        let mut result = Vec::new();
+        while !curr.is_null() {
+            let system_name = cstr_to_string(unsafe{(*curr).system_name});
+            let module = cstr_to_string(unsafe{(*curr).module});
+            let sn = cstr_to_string(unsafe{(*curr).sn});
+            let id = InterfaceDescription{
+                name: cstr_to_string(unsafe{(*curr).name}),
+                description: format!("{}, {}, {}", &system_name, &module, &sn)
+            };
+            result.push(id);
+            curr=unsafe{(*curr).next};
+        }
+        unsafe{self.dll.pfring_freealldevs(interfs)};
+        Ok(result)
     }
 
     fn version(&self) -> LibraryVersion {

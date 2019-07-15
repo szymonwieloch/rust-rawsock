@@ -1,19 +1,11 @@
 /*!
-    Sometimes you don't know the interfaces available on the given machine and you need a list of hem.
-    This functionality is only available in pcap and wpcap implementations.
-    pfring library does not support it.
+    Sometimes you don't know the interfaces available on the given machine
+    and you need a list of them.
 */
 
 extern crate rawsock;
-use rawsock::traits::{Library, PcapLibrary};
-use rawsock::{wpcap, pcap};
-use rawsock::InterfaceDescription;
-
-fn open_library<T>() -> T where T: Library {
-    let lib = T::open_default_paths().expect("Could not open library");
-    println!("Library opened, version is {}", lib.version());
-    lib
-}
+use rawsock::traits::Library;
+use rawsock::{open_best_library, InterfaceDescription, pcap};
 
 fn print_interfaces(interfs: Vec<InterfaceDescription>){
     println!("Found interfaces:");
@@ -25,18 +17,16 @@ fn print_interfaces(interfs: Vec<InterfaceDescription>){
 
 
 fn main () {
-    run_pcap();
-    run_wpcap();
-}
 
-fn run_pcap(){
-    let lib = open_library::<pcap::Library>();
-    let interfs = lib.all_interfaces().expect("Couldnot obtain interface list");
+    // this is generic version that work with the current library:
+    let lib = open_best_library().expect("Could not open any library");
+    let interfs = lib.all_interfaces().expect("Could not obtain interface list");
     print_interfaces(interfs);
-}
 
-fn run_wpcap() {
-    let lib = open_library::<wpcap::Library>();
-    let interfs = lib.all_interfaces().expect("Couldnot obtain interface list");
+    //this is a version with concrete library type
+    //pcap and pfring support different subsets of interfaces and add some virtual interfaces
+    //although "real" interfaces should be available in both of them
+    let lib = pcap::Library::open_default_paths().expect("Could not open pcap library");
+    let interfs = lib.all_interfaces().expect("Could not obtain interface list");
     print_interfaces(interfs);
 }

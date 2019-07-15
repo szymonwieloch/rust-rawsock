@@ -38,6 +38,7 @@ pub trait Library{
         Self::open_paths(Self::default_paths().iter().map(|s|*s))
     }
 
+    ///Returns list of default paths to the library on the given platform.
     fn default_paths() -> &'static[&'static str] where Self: Sized;
 
     ///Opens library searching in the list of provided paths.
@@ -56,16 +57,44 @@ pub trait Library{
     fn open(path: &str) -> Result<Self, Error> where Self: Sized;
 
     ///Opens interface (network card or network device) with the provided name.
-    /// Name depends on the platform, for example on linux this is a path to the file representing
-    /// a device, on Windows this is a GUID of the device.
+    ///
+    /// You can obtain names of available devices by calling the all_interfaces() function.
     fn open_interface<'a>(&'a self, name: &str) -> Result<Box<dyn Interface<'a>+'a>, Error>;
+
+    /**
+    Obtains list of available network interfaces.
+
+    Each of returned interface names can be further used to open interfaces.
+
+    **Note:** each library may support different set of interfaces.
+    This is because different libraries support different network interface types and some of them
+    add to the list virtual interfaces (such as pcap "any" interface or pfring "zc:eth0").
+    The same function called with pcap library will return different set of interfaces than run with pfring.
+    However in both cases the returned interface list will be supported by currently used library.
+
+    # Example
+
+    ```no_run
+    extern crate rawsock;
+    use rawsock::open_best_library;
+    use rawsock::traits::Library;
+
+    fn main(){
+        let lib = open_best_library().expect("Could not open any library.");
+        let interfs = lib.all_interfaces().expect("Could not obtain interface list");
+        for interf in &interfs{
+            println!("Found interface: {}", &interf.name);
+        }
+        let interf = lib.open_interface(&interfs.first().unwrap().name)
+            .expect("Could not open interface");
+        // do something with the interface
+    }
+    ```
+    */
+    fn all_interfaces(&self) -> Result<Vec<InterfaceDescription>, Error>;
 
     ///Returns library version
     fn version(&self) -> LibraryVersion;
 }
 
-/// Trait for pcap and wpcap libraries that share common extension methods.
-pub trait PcapLibrary : Library{
-    /// Obtains information about network interfaces available on this platform.
-    fn all_interfaces(&self) -> Result<Vec<InterfaceDescription>, Error>;
-}
+

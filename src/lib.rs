@@ -72,6 +72,8 @@ fn main() {
 extern crate dlopen;
 #[macro_use]
 extern crate dlopen_derive;
+#[macro_use]
+extern crate bitflags;
 extern crate libc;
 extern crate time;
 
