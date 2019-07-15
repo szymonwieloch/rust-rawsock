@@ -1,6 +1,3 @@
-use get_if_addrs::get_if_addrs;
-use std::collections::HashSet;
-
 /*
 This packet has  arbitrary source and destination MAC addresses and you cannot expect any real answer.
 But it is useful for testing purposes since it is actually sent to the local network area.
@@ -12,17 +9,3 @@ pub const ICMP_PACKET: [u8; 84] = [
 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23,
 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33,
 0x34, 0x35, 0x36, 0x37];
-
-pub fn find_first_interface_name() -> String {
-    println!{"You have the following interfaces available on your platform:"}
-    let mut interfs:HashSet<String> = HashSet::new();
-    for ip in get_if_addrs().expect("Could not read network information") {
-        interfs.insert(ip.name.clone());
-    }
-    for interf in &interfs{
-        println!("- {}", interf)
-    }
-    let first = interfs.iter().next().expect("There are no interfaces on your platform").clone();
-    println!("Chosen first interface is: {}", first);
-    first
-}

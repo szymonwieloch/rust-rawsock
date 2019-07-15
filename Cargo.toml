@@ -3,7 +3,7 @@ name = "rawsock"
 version = "0.2.0"
 edition = "2018"
 authors = ["Szymon Wieloch <szymon.wieloch@gmail.com>"]
-description = "Library for receiving and sending raw packets. While most crate wrap just one library, rawsock allows you to use pcap, wpcap, npcap and pf_ring using a consistent API for all of them."
+description = "Library for receiving and sending raw packets. While most crate wrap just one library, rawsock allows you to use pcap, wpcap, npcap and pf_ring (pfring) using a consistent API for all of them."
 keywords = ["packet", "socket", "pf_ring", "wpcap", "pcap"]
 license = "MIT"
 repository = "https://github.com/szymonwieloch/rust-rawsock"
@@ -23,9 +23,6 @@ libc = "0.2.29"
 time = "0.1"
 errno = "0.2.4"
 bitflags="1.1.0"
-
-[dev-dependencies]
-get_if_addrs = "0.5.3"
 
 [[example]]
 name = "dynamic"

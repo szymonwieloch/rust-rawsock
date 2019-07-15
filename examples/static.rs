@@ -7,7 +7,7 @@ extern crate rawsock;
 use rawsock::traits::{Interface, Library};
 use rawsock::{wpcap, pcap, pfring};
 mod commons;
-use self::commons::{find_first_interface_name, ICMP_PACKET};
+use self::commons::ICMP_PACKET;
 
 pub fn open_library<T>() -> T where T: Library {
     let lib = T::open_default_paths().expect("Could not open library");
@@ -40,7 +40,9 @@ fn main () {
 
 fn run_pcap(){
     let lib = open_library::<pcap::Library>();
-    let ifname = find_first_interface_name();
+    let ifname = lib.all_interfaces()
+        .expect("Could not obtain interface list").first()
+        .expect("There are no available interfaces").name.clone();
     let mut interf = lib.open_interface(&ifname).expect("Could not open pcap interface");
     send_packets(&mut interf);
     receive_packets(&mut interf);
@@ -48,7 +50,9 @@ fn run_pcap(){
 
 fn run_wpcap() {
     let lib = open_library::<wpcap::Library>();
-    let ifname = find_first_interface_name();
+    let ifname = lib.all_interfaces()
+        .expect("Could not obtain interface list").first()
+        .expect("There are no available interfaces").name.clone();
     let mut interf = lib.open_interface(&ifname).expect("Could not open wpcap interface");
     send_packets(&mut interf);
     receive_packets(&mut interf);
@@ -56,7 +60,9 @@ fn run_wpcap() {
 
 fn run_pfring() {
     let lib = open_library::<pfring::Library>();
-    let ifname = find_first_interface_name();
+    let ifname = lib.all_interfaces()
+        .expect("Could not obtain interface list").first()
+        .expect("There are no available interfaces").name.clone();
     let mut interf = lib.open_interface(&ifname).expect("Could not open pfring interface");
     send_packets(&mut interf);
     receive_packets(&mut interf);

@@ -90,6 +90,7 @@ pub trait Library{
         // do something with the interface
     }
     ```
+
     */
     fn all_interfaces(&self) -> Result<Vec<InterfaceDescription>, Error>;
 

@@ -7,17 +7,18 @@
 */
 
 extern crate rawsock;
-extern crate get_if_addrs;
 mod commons;
 use rawsock::open_best_library;
-use self::commons::{find_first_interface_name, ICMP_PACKET};
+use self::commons::ICMP_PACKET;
 
 fn main() {
     println!("Opening packet capturing library");
     let lib = open_best_library().expect("Could not open any packet capturing library");
     println!("Library opened, version is {}", lib.version());
-    let interf_name = find_first_interface_name();
-    println!("Opening the {} interface", interf_name);
+    let interf_name = lib.all_interfaces()
+        .expect("Could not obtain interface list").first()
+        .expect("There are no available interfaces").name.clone();
+    println!("Opening the {} interface", &interf_name);
     let mut interf = lib.open_interface(&interf_name).expect("Could not open network interface");
     println!("Interface opened, data link: {}", interf.data_link());
 
