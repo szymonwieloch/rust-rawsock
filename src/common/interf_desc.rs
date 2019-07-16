@@ -1,9 +1,11 @@
 use std::fmt::{Display, Formatter, Error as FmtError};
 
-/// Describes a netowrk interface.
+/// Describes a network interface.
 #[derive(Debug, Clone)]
 pub struct InterfaceDescription {
+    ///Interface name that can be used as an argument for open_interface() function.
     pub name: String,
+    /// Human friendly interface description.
     pub description: String
 }
 

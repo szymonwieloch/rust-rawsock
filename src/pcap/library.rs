@@ -59,5 +59,8 @@ impl Library {
     pub fn open_interface(&self, name: & str) -> Result<Interface, Error>{
        Interface::new(name, &self.dll)
     }
+    pub fn dll(&self) -> &PCapDll {
+        &self.dll
+    }
 }
 

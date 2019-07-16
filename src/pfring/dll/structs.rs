@@ -94,6 +94,24 @@ pub struct ThirdpartyFunc {
     pub ptr: unsafe extern "C" fn() -> () /* Function pointer */
 }
 
+///Equivalent of the C pfring_stat
+#[repr(C)]
+pub struct PFRingStats{
+    recv: u64,
+    drop: u64,
+    shunt: u64
+}
+
+
+///Equivalent of the C packet_direction
+#[repr(C)]
+pub enum PacketDirection {
+    RxAndTx = 0,
+    RxOnly,
+    TxOnly
+
+}
+
 
 
 

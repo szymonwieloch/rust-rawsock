@@ -26,6 +26,7 @@ bitflags! {
         const FLOW_OFFLOAD_NOUPDATES    = 1 << 18;
         const FLOW_OFFLOAD_NORAWDATA    = 1 << 19;
         const L7_FILTERING              = 1 << 20;
+        const DO_NOT_STRIP_FCS          = 1 << 21;
     }
 }
 
@@ -36,6 +37,7 @@ pub const POLL_SLEEP_STEP: c_int = 10; /* ns = 0.1 ms */
 pub const POLL_SLEEP_MIN: c_int = POLL_SLEEP_STEP;
 pub const POLL_SLEEP_MAX: c_int = 1000; /* ns */
 pub const POLL_QUEUE_MIN_LEN:c_int = 500; /* # packets */
+pub const MAX_NUM_RX_CHANNELS: usize = 64;
 
 /// Equivalent of enum filtering_mode
 #[repr(C)]

@@ -19,7 +19,7 @@ repository = "szymonwieloch/rust-rawsock"
 [dependencies]
 dlopen = "0.1.7"
 dlopen_derive = "0.1.4"
-libc = "0.2.29"
+libc = "0.2.60"
 time = "0.1"
 errno = "0.2.4"
 bitflags="1.1.0"
