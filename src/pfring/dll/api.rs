@@ -1,4 +1,4 @@
-use super::{PFRing, PFRingPacketHeader, PFRingInterface, PFRingStat, PacketDirection};
+use super::{PFRing, PFRingPacketHeader, PFRingInterface, PFRingStat, PacketDirection, PacketSlicingLevel, SocketMode, ClusterType};
 use libc::{c_char, c_uint, c_int, c_ushort, timespec};
 use dlopen::wrapper::WrapperApi;
 use super::constants::MAX_NUM_RX_CHANNELS;
@@ -21,8 +21,20 @@ pub struct PFRingDll{
     pfring_set_channel_mask: unsafe extern "C" fn (ring: * mut PFRing, channel_mask: u64) -> c_int,
     pfring_set_vlan_id: unsafe extern "C" fn (ring: * mut PFRing, vlan_id: u16) -> c_int,
     pfring_set_sampling_rate: unsafe extern "C" fn (ring: * mut PFRing, rate: u32) -> c_int,
+    pfring_set_filtering_sampling_rate: unsafe extern "C" fn (ring: * mut PFRing, rate : u32) -> c_int,
     pfring_set_direction: unsafe extern "C" fn (ring: * mut PFRing, direction: PacketDirection) -> c_int,
     pfring_set_promisc: unsafe extern "C" fn (ring: * mut PFRing, set_promisc: c_int)-> c_int,
+    pfring_set_poll_watermark: unsafe extern "C" fn(ring: * mut PFRing, watermark: u16) -> c_int,
+    pfring_set_poll_watermark_timeout: unsafe extern "C" fn (ring: * mut PFRing, poll_watermark_timeout: u16) -> c_int,
+    pfring_set_poll_duration: unsafe extern "C" fn (ring: * mut PFRing, duration: c_uint) -> c_int,
+    pfring_set_tx_watermark: unsafe extern "C" fn (ring: * mut PFRing, watermark: u16) -> c_int,
+    pfring_get_appl_stats_file_name: unsafe extern "C" fn (ring: PFRing, path: * mut c_char, path_len: c_uint) -> c_int,
+    pfring_set_packet_slicing: unsafe extern "C" fn(ring: * mut PFRing, packet_level: PacketSlicingLevel, additional_bytes: u32) -> c_int,
+    pfring_set_socket_mode: unsafe extern "C" fn (ring: * mut PFRing, mode: SocketMode) -> c_int,
+    pfring_set_cluster: unsafe extern "C" fn (ring: * mut PFRing, cluster_idd: c_uint, the_type: ClusterType) -> c_int,
+    pfring_remove_from_cluster: unsafe extern "C" fn (ring: * mut PFRing) -> c_int,
+    pfring_set_master_id: unsafe extern "C" fn (ring: * mut PFRing, master_id: u32) -> c_int,
+    pfring_set_master: unsafe extern "C" fn (ring: * mut PFRing, master: * mut PFRing) -> c_int,
 
 
     pfring_stats: unsafe extern "C" fn(ring: * mut PFRing, stats: * mut PFRingStat) -> c_int,
@@ -32,6 +44,7 @@ pub struct PFRingDll{
     pfring_breakloop: unsafe extern "C" fn (ring: * mut PFRing),
     pfring_get_num_rx_channels: unsafe extern "C" fn(ring: * mut PFRing) -> c_int,
     pfring_get_ring_id: unsafe extern "C" fn (ring: * mut PFRing) -> u32,
+    pfring_get_num_queued_pkts: unsafe extern "C" fn (ring: * mut PFRing) -> u32,
 
     pfring_enable_rss_rehash: unsafe extern "C" fn(ring: * mut PFRing) -> c_int,
     pfring_poll: unsafe extern "C" fn (ring: * mut PFRing, wait_duration: c_uint) -> c_int,
@@ -39,6 +52,8 @@ pub struct PFRingDll{
     pfring_next_pkt_time: unsafe extern "C" fn (ring: * mut PFRing, ts: * mut timespec) -> c_int,
     pfring_get_slot_header_len: unsafe extern "C" fn (ring: * mut PFRing) -> u16,
     pfring_get_device_ifindex: unsafe extern "C" fn (ring: * mut PFRing, device_name: * const c_char, if_index: * mut c_int) -> c_int,
+    pfring_get_selectable_fd: unsafe extern "C" fn (ring: * mut PFRing) -> c_int,
+    pfring_next_pkt_raw_timestamp: unsafe extern "C" fn (ring: * mut PFRing, timestamp_ns: * mut u64) -> c_int,
 
     //sending/receiving
     pfring_recv: unsafe extern "C" fn (ring: * const PFRing, buffer: * mut * mut u8, buffer_len: c_uint, hdr: * mut PFRingPacketHeader, wait_for_incoming_packet: u8) -> c_int,

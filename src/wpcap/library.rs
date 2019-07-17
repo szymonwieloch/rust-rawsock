@@ -3,12 +3,12 @@ use super::dll::WPCapDll;
 use dlopen::wrapper::Container;
 use crate::Error;
 use super::interface::Interface;
-use std::ffi::CStr;
 use super::paths::DEFAULT_PATHS;
 use crate::pcap_common::{PCapErrBuf, PCapInterface, SUCCESS};
 use std::ptr::null;
 use crate::common::InterfaceDescription;
 use crate::pcap_common::interface_data_from_pcap_list;
+use crate::utils::cstr_to_string;
 
 
 ///Instance of a opened wpcap library.
@@ -38,7 +38,7 @@ impl traits::Library for Library {
     }
 
     fn version(&self) -> LibraryVersion {
-        LibraryVersion::WPCap(unsafe { CStr::from_ptr(self.dll.pcap_lib_version()) }.to_string_lossy().into_owned())
+        LibraryVersion::WPCap(cstr_to_string(unsafe{self.dll.pcap_lib_version()}))
     }
 
     fn all_interfaces(&self) -> Result<Vec<InterfaceDescription>, Error> {
