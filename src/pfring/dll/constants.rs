@@ -39,6 +39,8 @@ pub const POLL_SLEEP_MAX: c_int = 1000; /* ns */
 pub const POLL_QUEUE_MIN_LEN:c_int = 500; /* # packets */
 pub const MAX_NUM_RX_CHANNELS: usize = 64;
 
+pub const SUCCESS: c_int = 0;
+
 /// Equivalent of enum filtering_mode
 #[repr(C)]
 pub enum FilteringMode{

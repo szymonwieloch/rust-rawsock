@@ -22,6 +22,7 @@ pub struct PFRingDll{
     pfring_set_vlan_id: unsafe extern "C" fn (ring: * mut PFRing, vlan_id: u16) -> c_int,
     pfring_set_sampling_rate: unsafe extern "C" fn (ring: * mut PFRing, rate: u32) -> c_int,
     pfring_set_direction: unsafe extern "C" fn (ring: * mut PFRing, direction: PacketDirection) -> c_int,
+    pfring_set_promisc: unsafe extern "C" fn (ring: * mut PFRing, set_promisc: c_int)-> c_int,
 
 
     pfring_stats: unsafe extern "C" fn(ring: * mut PFRing, stats: * mut PFRingStat) -> c_int,

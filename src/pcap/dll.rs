@@ -5,6 +5,7 @@ This is basicly the equivalent of C language header.
 
 use dlopen::wrapper::WrapperApi;
 use libc::{c_char, c_uint, c_int};
+use super::structs::PCapStat;
 
 /// Code hat helps you use the original DLL API.
 pub mod helpers {
@@ -24,6 +25,9 @@ pub struct PCapDll{
     pcap_next: unsafe extern "C" fn (handle: * const PCapHandle, header: * mut PCapPacketHeader) -> * const u8,
     pcap_datalink: unsafe extern "C" fn (handle: * const PCapHandle) -> c_int,
     pcap_lib_version: unsafe extern "C" fn() -> * const c_char,
+
+    pcap_stats: unsafe extern "C" fn (handle: * const PCapHandle, ps: * mut PCapStat) -> c_int,
+    pcap_statustostr: unsafe extern "C" fn (error: c_int) -> * const c_char,
     //devices
     pcap_findalldevs: unsafe extern "C" fn (alldevsp: * mut * const PCapInterface, errbuf: * const c_char) -> c_int,
     pcap_freealldevs: unsafe extern "C" fn (alldevs: * const PCapInterface),

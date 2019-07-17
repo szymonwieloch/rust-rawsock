@@ -45,3 +45,12 @@ pub fn open_best_library() -> Result<Box<dyn Library>, Error> {
     }
 }
 
+///Provides library statistics
+#[derive(Copy, Clone, Debug)]
+pub struct Stats {
+    /// Received frames
+    pub received: u64,
+    ///Dropped frames
+    pub dropped: u64
+}
+

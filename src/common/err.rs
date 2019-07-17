@@ -20,7 +20,8 @@ pub enum Error {
     ///Obtaining device description list failed.
     GettingDeviceDescriptionList(String),
     ///No paths were provided by the user
-    NoPathsProvided
+    NoPathsProvided,
+    LibraryError(String)
 }
 
 impl ErrorTrait for Error {
@@ -32,7 +33,8 @@ impl ErrorTrait for Error {
             Error::ReceivingPacket(ref txt) => txt,
             Error::SendingPacket(ref txt) => txt,
             Error::GettingDeviceDescriptionList(ref txt) => txt,
-            Error::NoPathsProvided => "No library paths were provided."
+            Error::NoPathsProvided => "No library paths were provided.",
+            Error::LibraryError(ref txt) => txt
         }
     }
 }
@@ -46,7 +48,8 @@ impl Display for Error {
             Error::ReceivingPacket(ref txt) => f.write_str(txt),
             Error::SendingPacket(ref txt) => f.write_str(txt),
             Error::GettingDeviceDescriptionList(ref txt) => f.write_str(txt),
-            Error::NoPathsProvided => f.write_str("No library paths were provided.")
+            Error::NoPathsProvided => f.write_str("No library paths were provided."),
+            Error::LibraryError(ref txt) => f.write_str(txt)
         }
     }
 }

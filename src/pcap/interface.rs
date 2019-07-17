@@ -1,11 +1,13 @@
 use std::ffi::{CStr, CString};
-use crate::{Error,  BorrowedPacket, DataLink, traits};
+use crate::{Error,  BorrowedPacket, DataLink, traits, Stats};
 use super::dll::{PCapHandle, PCapDll, SUCCESS, PCapPacketHeader};
 use super::dll::helpers::PCapErrBuf;
+use super::structs::PCapStat;
 use libc::{ c_int};
 use std::mem::uninitialized;
 use time::Timespec;
 use std::slice::from_raw_parts;
+use crate::utils::cstr_to_string;
 
 ///pcap version of interface.
 pub struct Interface<'a> {
@@ -40,6 +42,11 @@ impl<'a> Interface<'a> {
             handle,
             datalink
         })
+    }
+
+    fn last_error(&self) -> Error {
+        let cerr = unsafe{self.dll.pcap_geterr(self.handle)};
+        Error::LibraryError(cstr_to_string(cerr))
     }
 }
 
@@ -79,5 +86,17 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
 
     fn data_link(&self) -> DataLink {
         self.datalink
+    }
+
+    fn stats(&self) -> Result<Stats, Error> {
+        let mut stats: PCapStat = unsafe{uninitialized()};
+        if SUCCESS == unsafe{self.dll.pcap_stats(self.handle, &mut stats)}{
+            Ok(Stats{
+                received: stats.ps_recv as u64,
+                dropped: (stats.ps_drop + stats.ps_ifdrop) as u64
+            })
+        } else {
+            Err(self.last_error())
+        }
     }
 }

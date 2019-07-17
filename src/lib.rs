@@ -85,4 +85,4 @@ mod pcap_common;
 mod utils;
 mod common;
 
-pub use self::common::{Packet, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library, InterfaceDescription, Error};
+pub use self::common::{Packet, BorrowedPacket, OwnedPacket, DataLink, LibraryVersion, open_best_library, InterfaceDescription, Error, Stats};

@@ -1,11 +1,13 @@
 use std::ffi::{CStr, CString};
-use crate::{Error,  BorrowedPacket, DataLink, traits};
+use crate::{Error,  BorrowedPacket, DataLink, traits, Stats};
 use super::dll::{PCapHandle, WPCapDll, SUCCESS, PCapPacketHeader, PCapSendQueue};
 use super::dll::helpers::PCapErrBuf;
 use libc::{ c_int, c_uint};
 use std::mem::uninitialized;
 use time::Timespec;
 use std::slice::from_raw_parts;
+use super::structs::PCapStat;
+use crate::utils::cstr_to_string;
 
 const QUEUE_SIZE: usize = 65536 * 8; //min 8 packets
 
@@ -46,6 +48,11 @@ impl<'a> Interface<'a> {
             handle,
             datalink
         })
+    }
+
+    fn last_error(&self) -> Error {
+        let cerr = unsafe{self.dll.pcap_geterr(self.handle)};
+        Error::LibraryError(cstr_to_string(cerr))
     }
 }
 
@@ -109,5 +116,17 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
 
     fn data_link(&self) -> DataLink {
         self.datalink
+    }
+
+    fn stats(&self) -> Result<Stats, Error> {
+        let mut stats: PCapStat = unsafe{uninitialized()};
+        if SUCCESS == unsafe{self.dll.pcap_stats(self.handle, &mut stats)}{
+            Ok(Stats{
+                received: stats.ps_recv as u64,
+                dropped: stats.ps_drop as u64 //sp_ifdrop is not yet supported.
+            })
+        } else {
+            Err(self.last_error())
+        }
     }
 }

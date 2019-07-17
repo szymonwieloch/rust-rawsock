@@ -62,6 +62,7 @@ impl traits::Library for Library {
         let release: u8 = ver as u8;
         LibraryVersion::PFRing(format!("{}.{}.{}", major, minor, release))
     }
+
 }
 
 impl Library {

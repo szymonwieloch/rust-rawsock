@@ -2,7 +2,7 @@
 Common traits for all libraries.
 */
 
-use crate::{BorrowedPacket, DataLink, LibraryVersion, Error, InterfaceDescription};
+use crate::{BorrowedPacket, DataLink, LibraryVersion, Error, InterfaceDescription, Stats};
 use std::iter::IntoIterator;
 
 
@@ -22,6 +22,9 @@ pub trait Interface<'a>{
 
     ///Provides information about the underlying technology used for this connection.
     fn data_link(&self) -> DataLink;
+
+    ///Provides transmission statistics
+    fn stats(&self) -> Result<Stats, Error>;
 }
 
 /// Trait for structures representing opened packet capture libraries.

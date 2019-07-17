@@ -1,12 +1,12 @@
-use crate::{BorrowedPacket, DataLink, traits};
-use super::dll::{PFRing, PFRingDll, PFRingPacketHeader};
+use crate::{BorrowedPacket, DataLink, traits, Stats};
+use super::dll::{PFRing, PFRingDll, PFRingPacketHeader, PFRingStat, SUCCESS};
 use crate::Error;
 use dlopen::wrapper::Container;
 use std::ffi::CString;
 use std::mem::uninitialized;
 use time::Timespec;
 use std::slice::from_raw_parts;
-use libc::{c_uint};
+use libc::{c_uint, c_int};
 use crate::utils::string_from_errno;
 use super::dll::helpers::string_from_pfring_err_code;
 
@@ -33,6 +33,10 @@ impl<'a> Interface<'a>{
         Ok(Self{
             handle, dll
         })
+    }
+
+    fn int_to_err(&self, err: c_int) -> Error {
+        Error::LibraryError(string_from_pfring_err_code(err))
     }
 }
 
@@ -71,5 +75,18 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
 
     fn data_link(&self) -> DataLink {
         DataLink::Ethernet
+    }
+
+    fn stats(&self) -> Result<Stats, Error> {
+        let mut stats:PFRingStat = unsafe{uninitialized()};
+        let result = unsafe{self.dll.pfring_stats(self.handle, &mut stats)};
+        if result == SUCCESS {
+            Ok(Stats {
+                received: stats.recv as u64,
+                dropped: stats.drop as u64
+            })
+        } else {
+            Err(self.int_to_err(result))
+        }
     }
 }

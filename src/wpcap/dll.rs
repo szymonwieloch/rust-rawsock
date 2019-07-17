@@ -5,7 +5,8 @@ This is basicly the equivalent of C language header.
 
 use dlopen::wrapper::WrapperApi;
 use libc::{c_char, c_uint, c_int};
-pub use super::super::pcap_common::{SUCCESS, PCapHandle, PCapPacketHeader, TimeVal, PCapInterface};
+pub use crate::pcap_common::{SUCCESS, PCapHandle, PCapPacketHeader, TimeVal, PCapInterface};
+pub use super::structs::PCapStat;
 
 /// Code hat helps you use the original DLL API.
 pub mod helpers {
@@ -34,6 +35,8 @@ pub struct WPCapDll {
     pcap_findalldevs: unsafe extern "C" fn(alldevsp: *mut *const PCapInterface, errbuf: *const c_char) -> c_int,
     pcap_freealldevs: unsafe extern "C" fn(alldevs: *const PCapInterface),
     pcap_lib_version: unsafe extern "C" fn() -> * const c_char,
+
+    pcap_stats: unsafe extern "C" fn (handle: * const PCapHandle, ps: * mut PCapStat) -> c_int,
 
     //wpcap specific
     pcap_sendqueue_destroy: unsafe extern "C" fn (queue: * mut PCapSendQueue),

@@ -5,6 +5,7 @@ Code for managing the *pcap* library.
 mod library;
 pub mod dll;
 mod interface;
+mod structs;
 mod paths;
 
 
