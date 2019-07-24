@@ -1,4 +1,4 @@
-use libc::{c_long, c_uint, c_char, c_int, time_t};
+use libc::{c_long, c_uint, c_char, c_int, time_t, c_uchar};
 use super::constants::PFRingChunkType;
 
 ///Raw PF Ring handle - created only to allow construction of pointers.
@@ -112,6 +112,24 @@ pub enum PacketDirection {
 
 }
 
+///Equivalent of the C processPacket
+pub type PFRingProcessPacket = unsafe extern "C" fn(h: * const PFRingPacketHeader, p: * const c_uchar, user_bytes: * const c_uchar);
+
+///Equivalent of the C pfring_chunk_type
+#[repr(C)]
+pub enum ChunkType{
+    PCapChunk = 0,
+    PCapNsecChunk,
+    PCapngNsecChunk,
+    UnknownChunkType
+}
+
+///Equivalent of the C packet_direction
+#[repr(C)]
+pub struct ChunkInfo{
+    pub length: u32,
+    pub chunk_type: ChunkType
+}
 
 
 
