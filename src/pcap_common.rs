@@ -1,5 +1,5 @@
 use std::ffi::{CStr};
-use libc::{c_char, c_void, c_uint, c_int, c_long};
+use libc::{c_char, c_void, c_uint, c_int, c_long, c_uchar, c_ushort};
 use std::mem::uninitialized;
 use crate::common::InterfaceDescription;
 use crate::utils::cstr_to_string;
@@ -9,6 +9,9 @@ pub const ERRBUF_SIZE: usize = 256; //taken from header, is it platform independ
 pub enum PCapHandle {}
 /// Value returned by pcap library to indicate successful operation.
 pub const SUCCESS: c_int = 0;
+
+///Raw PCap duper handle - created only to allow construction of pointers.
+pub enum PCapDumper {}
 
 
 ///Wrapper around pcap error buffer
@@ -68,12 +71,16 @@ pub struct TimeVal {
     pub tv_sec: c_long,         /* seconds */
     pub tv_usec: c_long        /* and microseconds */
 }
-/* probably this his not needed
+
+///Equivalent of pcap_direction_t
+/// #[repr(u32)]
 pub enum PCapDirection {
     InOut    = 0,
     In       = 1,
     Out      = 2,
-}*/
+}
+
+pub type PCapHandler=extern "C" fn(user: c_uchar, h: * const PCapPacketHeader, bytes: * const c_uchar);
 
 pub fn interface_data_from_pcap_list(interfs: * const PCapInterface) -> Vec<InterfaceDescription> {
     let mut interfs_descr = Vec::new();
@@ -87,4 +94,18 @@ pub fn interface_data_from_pcap_list(interfs: * const PCapInterface) -> Vec<Inte
         curr = unsafe{(*curr).next};
     }
     interfs_descr
+}
+
+/// Equivalent of the bpf_insn C struct
+pub struct BpfInsn {
+    pub code: c_ushort,
+    pub jt: c_uchar,
+    pub jf: c_uchar,
+    pub k: u32,
+}
+
+///Equivalent of the bpf_program C struct
+pub struct BpfProgram {
+    pub bf_len: c_uint,
+    pub bf_insns: *mut BpfInsn,
 }

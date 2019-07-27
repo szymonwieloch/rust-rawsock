@@ -25,6 +25,13 @@ pub trait Interface<'a>{
 
     ///Provides transmission statistics
     fn stats(&self) -> Result<Stats, Error>;
+
+    //TODO
+    //loop
+    //breakloop
+    //bpf filters
+    //receive/send with timeout
+
 }
 
 /// Trait for structures representing opened packet capture libraries.
