@@ -4,10 +4,9 @@ use super::dll::{PCapHandle, WPCapDll, SUCCESS, PCapPacketHeader, PCapSendQueue}
 use super::dll::helpers::PCapErrBuf;
 use libc::{ c_int, c_uint};
 use std::mem::uninitialized;
-use time::Timespec;
-use std::slice::from_raw_parts;
 use super::structs::PCapStat;
 use crate::utils::cstr_to_string;
+use crate::pcap_common::helpers::borrowed_packet_from_header;
 
 const QUEUE_SIZE: usize = 65536 * 8; //min 8 packets
 
@@ -65,7 +64,7 @@ impl<'a> Drop for Interface<'a> {
     }
 }
 
-impl<'a> traits::Interface<'a> for Interface<'a> {
+impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
         let header = PCapPacketHeader {
             len: packet.len() as c_uint,
@@ -88,17 +87,14 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
         }
     }
 
-    fn receive<'b>(&'b mut self) -> Result<BorrowedPacket<'b>, Error>{
+    fn receive<'b>(& mut self) -> Result<BorrowedPacket, Error>{
         let mut header: PCapPacketHeader = unsafe {uninitialized()};
         //TODO: replace pcap_next with pcap_next_ex to obtain more error information
         let data = unsafe { self.dll.pcap_next(self.handle, &mut header)};
         if data.is_null() {
             Err(Error::ReceivingPacket("Unknown error when obtaining packet".into()))
         } else {
-            Ok(
-                unsafe {
-                    BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, (header.ts.tv_usec * 1000) as i32), from_raw_parts(data, header.caplen as usize))
-                })
+            Ok(borrowed_packet_from_header(&header, data))
         }
     }
 
@@ -128,5 +124,9 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
         } else {
             Err(self.last_error())
         }
+    }
+
+    fn break_loop(& mut self) {
+        unsafe{self.dll.pcap_breakloop(self.handle)}
     }
 }

@@ -5,6 +5,10 @@ Code hat helps you use the original DLL API.
 use libc::c_int;
 use std::convert::TryFrom;
 use std::mem::transmute;
+use crate::BorrowedPacket;
+use time::Timespec;
+use crate::pfring::dll::structs::PFRingPacketHeader;
+use std::slice::from_raw_parts;
 
 /// Safe wrapper around error codes returned by pfring API.
 #[allow(dead_code)]
@@ -62,5 +66,11 @@ pub fn string_from_pfring_err_code(err_code: c_int) -> String {
         String::from(err.to_description())
     } else {
         format!("Unknown PF Ring error code: {}", err_code)
+    }
+}
+
+pub fn borrowed_packet_from_header<'a, 'b>(header: &'a PFRingPacketHeader, data: * const u8) -> BorrowedPacket<'b> {
+    unsafe {
+        BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, (header.ts.tv_usec * 1000) as i32), from_raw_parts(data, header.caplen as usize))
     }
 }

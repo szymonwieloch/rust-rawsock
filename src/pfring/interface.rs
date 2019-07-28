@@ -4,17 +4,18 @@ use crate::Error;
 use dlopen::wrapper::Container;
 use std::ffi::CString;
 use std::mem::uninitialized;
-use time::Timespec;
-use std::slice::from_raw_parts;
-use libc::{c_uint, c_int};
+use libc::{c_uint, c_int, c_uchar};
 use crate::utils::string_from_errno;
-use super::dll::helpers::string_from_pfring_err_code;
+use super::dll::helpers::{string_from_pfring_err_code, borrowed_packet_from_header};
+use std::mem::transmute;
 
 ///pfring version of an interface.
 pub struct Interface<'a> {
     handle: * mut PFRing,
     dll: & 'a Container<PFRingDll>,
 }
+
+
 
 impl<'a> Interface<'a>{
     pub fn new(name: &str, dll: &'a Container<PFRingDll>) -> Result<Self, Error> {
@@ -46,7 +47,7 @@ impl<'a> Drop for Interface<'a> {
     }
 }
 
-impl<'a> traits::Interface<'a> for Interface<'a> {
+impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
         let result = unsafe{self.dll.pfring_send(self.handle, packet.as_ptr(), packet.len() as c_uint, 0)};
         if  result <0 {
@@ -63,8 +64,7 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
         if result != 1 {
             Err(Error::ReceivingPacket(string_from_pfring_err_code(result)))
         } else {
-            let packet = unsafe{from_raw_parts(buf, header.caplen as usize)};
-            Ok(BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, (header.ts.tv_usec*1000) as i32), packet))
+            Ok(borrowed_packet_from_header(&header, buf))
         }
     }
 
@@ -85,6 +85,30 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
                 received: stats.recv as u64,
                 dropped: stats.drop as u64
             })
+        } else {
+            Err(self.int_to_err(result))
+        }
+    }
+
+    fn break_loop(& mut self) {
+        unsafe{self.dll.pfring_breakloop(self.handle)};
+    }
+}
+
+extern "C" fn on_received_packet<F>(h: * const PFRingPacketHeader, p: * const c_uchar, user_bytes: * const c_uchar) where F: FnMut(&BorrowedPacket) {
+    let callback: &mut F = unsafe{transmute(user_bytes)};
+
+    let packet = borrowed_packet_from_header(unsafe{&*h}, p);
+    callback(&packet)
+}
+
+impl<'a> Interface<'a> {
+    pub fn loop_infinite<F>(&self, callback: F) -> Result<(), Error>
+        where F: FnMut(&BorrowedPacket)
+    {
+        let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet::<F>, transmute(& callback), 0)};
+        if result == SUCCESS {
+            Ok(())
         } else {
             Err(self.int_to_err(result))
         }

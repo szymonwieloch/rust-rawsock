@@ -28,9 +28,9 @@ impl traits::Library for Library {
         })
     }
 
-    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<traits::Interface<'a> +'a>, Error> {
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<traits::DynamicInterface<'a> +'a>, Error> {
         match self.open_interface(name){
-            Ok(interf) => Ok(Box::new(interf) as Box<traits::Interface>),
+            Ok(interf) => Ok(Box::new(interf) as Box<traits::DynamicInterface>),
             Err(e) => Err(e)
         }
     }

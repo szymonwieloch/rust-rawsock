@@ -1,13 +1,14 @@
 use std::ffi::{CStr, CString};
 use crate::{Error,  BorrowedPacket, DataLink, traits, Stats};
-use super::dll::{PCapHandle, PCapDll, SUCCESS, PCapPacketHeader};
+use super::dll::{PCapHandle, PCapDll, PCapPacketHeader};
 use super::dll::helpers::PCapErrBuf;
 use super::structs::PCapStat;
 use libc::{ c_int};
-use std::mem::uninitialized;
-use time::Timespec;
-use std::slice::from_raw_parts;
+use std::mem::{uninitialized, transmute};
 use crate::utils::cstr_to_string;
+
+use crate::pcap_common::helpers::{borrowed_packet_from_header, on_received_packet};
+use crate::pcap_common::constants::{SUCCESS, PCAP_ERROR_BREAK};
 
 ///pcap version of interface.
 pub struct Interface<'a> {
@@ -56,7 +57,7 @@ impl<'a> Drop for Interface<'a> {
     }
 }
 
-impl<'a> traits::Interface<'a> for Interface<'a> {
+impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
     fn send(&self, packet: &[u8]) -> Result<(), Error> {
         if unsafe {self.dll.pcap_sendpacket(self.handle, packet.as_ptr(), packet.len() as c_int)} == SUCCESS {
             Ok(())
@@ -73,10 +74,7 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
         if data.is_null() {
                 Err(Error::ReceivingPacket("Unknown error when obtaining packet".into()))
         } else {
-            Ok(
-                unsafe {
-                    BorrowedPacket::new(Timespec::new(header.ts.tv_sec as i64, (header.ts.tv_usec * 1000) as i32), from_raw_parts(data, header.caplen as usize))
-                })
+            Ok(borrowed_packet_from_header(& header, data))
         }
     }
 
@@ -95,6 +93,26 @@ impl<'a> traits::Interface<'a> for Interface<'a> {
                 received: stats.ps_recv as u64,
                 dropped: (stats.ps_drop + stats.ps_ifdrop) as u64
             })
+        } else {
+            Err(self.last_error())
+        }
+    }
+
+    fn break_loop(& mut self) {
+        unsafe{self.dll.pcap_breakloop(self.handle)}
+    }
+}
+
+
+
+
+impl<'a> Interface<'a> {
+    pub fn loop_infinite<F>(&self, callback: F) -> Result<(), Error>
+        where F: FnMut(&BorrowedPacket)
+    {
+        let result = unsafe{self.dll.pcap_loop(self.handle, -1, on_received_packet::<F>, transmute(& callback))};
+        if result == SUCCESS || result == PCAP_ERROR_BREAK {
+            Ok(())
         } else {
             Err(self.last_error())
         }

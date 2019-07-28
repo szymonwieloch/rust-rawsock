@@ -12,7 +12,9 @@ pub mod helpers {
     pub use crate::pcap_common::PCapErrBuf;
 }
 
-pub use crate::pcap_common::{SUCCESS, PCapHandle, PCapPacketHeader, TimeVal, PCapInterface, PCapHandler, BpfProgram, PCapDirection, PCapDumper};
+pub use crate::pcap_common::{PCapHandle, PCapPacketHeader, TimeVal, PCapInterface, PCapHandler, BpfProgram, PCapDirection, PCapDumper};
+pub use crate::pcap_common::constants::SUCCESS;
+
 
 ///Dynamic link library interface for pcap.so
 #[derive(WrapperApi)]

@@ -9,7 +9,7 @@ use std::iter::IntoIterator;
 ///Trait for structures representing an opened interface (or network card or network device)
 ///
 /// Interfaces are opened using a concrete library - check the Library trait.
-pub trait Interface<'a>{
+pub trait DynamicInterface<'a>{
 
     ///Sends a raw packet.
     fn send(&self, packet: &[u8]) -> Result<(), Error>;
@@ -26,11 +26,23 @@ pub trait Interface<'a>{
     ///Provides transmission statistics
     fn stats(&self) -> Result<Stats, Error>;
 
+    ///Breaks previously started loops.
+    fn break_loop(& mut self);
+
     //TODO
     //loop
     //breakloop
     //bpf filters
     //receive/send with timeout
+
+}
+
+pub trait Interface<'a>: DynamicInterface<'a> {
+    /**Runs infinite loop and passes received packets via callback.
+
+    Exits when the break_loop() function is called or on error.
+    */
+    fn loop_infinite<F>(&mut self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket);
 
 }
 
@@ -69,7 +81,7 @@ pub trait Library{
     ///Opens interface (network card or network device) with the provided name.
     ///
     /// You can obtain names of available devices by calling the all_interfaces() function.
-    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<dyn Interface<'a>+'a>, Error>;
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<dyn DynamicInterface<'a>+'a>, Error>;
 
     /**
     Obtains list of available network interfaces.

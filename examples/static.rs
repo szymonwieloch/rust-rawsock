@@ -4,7 +4,7 @@
 */
 
 extern crate rawsock;
-use rawsock::traits::{Interface, Library};
+use rawsock::traits::{DynamicInterface, Library};
 use rawsock::{wpcap, pcap, pfring};
 mod commons;
 use self::commons::ICMP_PACKET;
@@ -15,7 +15,7 @@ pub fn open_library<T>() -> T where T: Library {
     lib
 }
 
-pub fn receive_packets<'a, T>(interf: &mut T) where T: Interface<'a>{
+pub fn receive_packets<'a, T>(interf: &mut T) where T: DynamicInterface<'a>{
     println!("Receiving 5 packets:");
     for i in 1..6{
         let packet = interf.receive().expect("Error while receiving packet");
@@ -23,7 +23,7 @@ pub fn receive_packets<'a, T>(interf: &mut T) where T: Interface<'a>{
     }
 }
 
-pub fn send_packets<'a, T>(interf: &mut T) where T: Interface<'a> {
+pub fn send_packets<'a, T>(interf: &mut T) where T: DynamicInterface<'a> {
     println!("Data link: {}", interf.data_link());
     println!("Sending 5 ICMP ping packets:");
     for i in 1..6 {

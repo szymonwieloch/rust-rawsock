@@ -1,14 +1,13 @@
 use std::ffi::{CStr};
-use libc::{c_char, c_void, c_uint, c_int, c_long, c_uchar, c_ushort};
+use libc::{c_char, c_void, c_uint, c_long, c_uchar, c_ushort};
 use std::mem::uninitialized;
 use crate::common::InterfaceDescription;
 use crate::utils::cstr_to_string;
+use super::constants::ERRBUF_SIZE;
 
-pub const ERRBUF_SIZE: usize = 256; //taken from header, is it platform independent?
+
 ///Raw PCap handle - created only to allow construction of pointers.
 pub enum PCapHandle {}
-/// Value returned by pcap library to indicate successful operation.
-pub const SUCCESS: c_int = 0;
 
 ///Raw PCap duper handle - created only to allow construction of pointers.
 pub enum PCapDumper {}
@@ -80,7 +79,7 @@ pub enum PCapDirection {
     Out      = 2,
 }
 
-pub type PCapHandler=extern "C" fn(user: c_uchar, h: * const PCapPacketHeader, bytes: * const c_uchar);
+pub type PCapHandler=extern "C" fn(user: * mut c_uchar, h: * const PCapPacketHeader, bytes: * const c_uchar);
 
 pub fn interface_data_from_pcap_list(interfs: * const PCapInterface) -> Vec<InterfaceDescription> {
     let mut interfs_descr = Vec::new();

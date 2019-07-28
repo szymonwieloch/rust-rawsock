@@ -6,7 +6,8 @@ use super::interface::Interface;
 use std::ffi::CStr;
 use super::paths::DEFAULT_PATHS;
 use crate::common::InterfaceDescription;
-use crate::pcap_common::{interface_data_from_pcap_list, PCapInterface, PCapErrBuf, SUCCESS};
+use crate::pcap_common::{interface_data_from_pcap_list, PCapInterface, PCapErrBuf};
+use crate::pcap_common::constants::{SUCCESS};
 use std::ptr::null;
 
 
@@ -31,9 +32,9 @@ impl traits::Library for Library {
         })
     }
 
-    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<traits::Interface<'a> +'a>, Error> {
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<traits::DynamicInterface<'a> +'a>, Error> {
         match self.open_interface(name){
-            Ok(interf) => Ok(Box::new(interf) as Box<traits::Interface>),
+            Ok(interf) => Ok(Box::new(interf) as Box<traits::DynamicInterface>),
             Err(e) => Err(e)
         }
     }
@@ -62,5 +63,6 @@ impl Library {
     pub fn dll(&self) -> &PCapDll {
         &self.dll
     }
+
 }
 
