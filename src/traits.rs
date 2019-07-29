@@ -38,7 +38,9 @@ pub trait DynamicInterface<'a>{
 }
 
 pub trait Interface<'a>: DynamicInterface<'a> {
-    /**Runs infinite loop and passes received packets via callback.
+
+    /**
+    Runs infinite loop and passes received packets via callback.
 
     Exits when the break_loop() function is called or on error.
     */
