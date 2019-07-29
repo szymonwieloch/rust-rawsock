@@ -57,10 +57,12 @@ pub struct PCapPacketHeader {
     pub ts: TimeVal,
     pub caplen: c_uint,
     pub len: c_uint,
-    //some documentation suggest that this additional field should be present on MAC os.
-    //but the main documentation seems to state something different.
-    //#[cfg(target_os="macos")]
-    //pub comment: [c_char; 256]
+    /*
+    Although the official documentation does not mention this, pcap headers on Apple devices
+    have additional field and without this definition there is stack corruption in some cases.
+    */
+    #[cfg(any(target_os = "macos", target_os = "ios"))]
+    pub comment: [c_char; 256]
 }
 
 ///Equivalent of C struct timeval_t
