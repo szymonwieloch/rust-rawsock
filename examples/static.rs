@@ -7,13 +7,7 @@ extern crate rawsock;
 use rawsock::traits::{DynamicInterface, Library};
 use rawsock::{wpcap, pcap, pfring};
 mod commons;
-use self::commons::ICMP_PACKET;
-
-pub fn open_library<T>() -> T where T: Library {
-    let lib = T::open_default_paths().expect("Could not open library");
-    println!("Library opened, version is {}", lib.version());
-    lib
-}
+use self::commons::{ICMP_PACKET, open_library};
 
 pub fn receive_packets<'a, T>(interf: &mut T) where T: DynamicInterface<'a>{
     println!("Receiving 5 packets:");

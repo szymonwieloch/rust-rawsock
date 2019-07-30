@@ -27,7 +27,7 @@ pub trait DynamicInterface<'a>{
     fn stats(&self) -> Result<Stats, Error>;
 
     ///Breaks previously started loops.
-    fn break_loop(& mut self);
+    fn break_loop(&  self);
 
     //TODO
     //loop
@@ -37,14 +37,21 @@ pub trait DynamicInterface<'a>{
 
 }
 
-pub trait Interface<'a>: DynamicInterface<'a> {
+/**
+    Contains static part of the interface trait.
+
+    Template functions cannot be used for dynamic dispatch (&dyn) and it was necessary to split the
+    interface trait into two parts - static and dynamic, depending how user uses the trait.
+    StaticInterface contains only the part of trait that cannot be used in the dynamic way.
+*/
+pub trait StaticInterface<'a>: DynamicInterface<'a> {
 
     /**
     Runs infinite loop and passes received packets via callback.
 
     Exits when the break_loop() function is called or on error.
     */
-    fn loop_infinite<F>(&mut self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket);
+    fn loop_infinite<F>(& self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket);
 
 }
 

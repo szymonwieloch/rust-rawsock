@@ -1,12 +1,13 @@
 use std::ffi::{CStr, CString};
 use crate::{Error,  BorrowedPacket, DataLink, traits, Stats};
-use super::dll::{PCapHandle, WPCapDll, SUCCESS, PCapPacketHeader, PCapSendQueue};
+use super::dll::{PCapHandle, WPCapDll, PCapPacketHeader, PCapSendQueue};
 use super::dll::helpers::PCapErrBuf;
 use libc::{ c_int, c_uint};
-use std::mem::uninitialized;
+use std::mem::{uninitialized, transmute};
 use super::structs::PCapStat;
 use crate::utils::cstr_to_string;
-use crate::pcap_common::helpers::borrowed_packet_from_header;
+use crate::pcap_common::helpers::{borrowed_packet_from_header, on_received_packet};
+use crate::pcap_common::constants::{SUCCESS, PCAP_ERROR_BREAK};
 
 const QUEUE_SIZE: usize = 65536 * 8; //min 8 packets
 
@@ -128,7 +129,18 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         }
     }
 
-    fn break_loop(& mut self) {
+    fn break_loop(& self) {
         unsafe{self.dll.pcap_breakloop(self.handle)}
+    }
+}
+
+impl<'a> traits::StaticInterface<'a> for Interface<'a> {
+    fn loop_infinite<F>(& self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket) {
+        let result = unsafe { self.dll.pcap_loop(self.handle, -1, on_received_packet::<F>, transmute(&callback)) };
+        if result == SUCCESS || result == PCAP_ERROR_BREAK {
+            Ok(())
+        } else {
+            Err(self.last_error())
+        }
     }
 }

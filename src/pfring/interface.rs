@@ -90,7 +90,7 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         }
     }
 
-    fn break_loop(& mut self) {
+    fn break_loop(& self) {
         unsafe{self.dll.pfring_breakloop(self.handle)};
     }
 }
@@ -102,10 +102,8 @@ extern "C" fn on_received_packet<F>(h: * const PFRingPacketHeader, p: * const c_
     callback(&packet)
 }
 
-impl<'a> Interface<'a> {
-    pub fn loop_infinite<F>(&self, callback: F) -> Result<(), Error>
-        where F: FnMut(&BorrowedPacket)
-    {
+impl<'a> traits::StaticInterface<'a> for Interface<'a> {
+    fn loop_infinite<F>(& self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket) {
         let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet::<F>, transmute(& callback), 0)};
         if result == SUCCESS {
             Ok(())

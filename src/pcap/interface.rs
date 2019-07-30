@@ -98,19 +98,15 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         }
     }
 
-    fn break_loop(& mut self) {
+    fn break_loop(& self) {
         unsafe{self.dll.pcap_breakloop(self.handle)}
     }
 }
 
 
-
-
-impl<'a> Interface<'a> {
-    pub fn loop_infinite<F>(&self, callback: F) -> Result<(), Error>
-        where F: FnMut(&BorrowedPacket)
-    {
-        let result = unsafe{self.dll.pcap_loop(self.handle, -1, on_received_packet::<F>, transmute(& callback))};
+impl<'a> traits::StaticInterface<'a> for Interface<'a> {
+    fn loop_infinite<F>(& self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket) {
+        let result = unsafe { self.dll.pcap_loop(self.handle, -1, on_received_packet::<F>, transmute(&callback)) };
         if result == SUCCESS || result == PCAP_ERROR_BREAK {
             Ok(())
         } else {

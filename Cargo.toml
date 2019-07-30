@@ -33,3 +33,6 @@ name = "static"
 
 [[example]]
 name = "list_interfs"
+
+[[example]]
+name = "loop"
