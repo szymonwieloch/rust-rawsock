@@ -52,7 +52,7 @@ pub struct PCapInterface {
 
 ///Equivalent of C struct pcap_pkthdr
 #[repr(C)]
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 pub struct PCapPacketHeader {
     pub ts: TimeVal,
     pub caplen: c_uint,
