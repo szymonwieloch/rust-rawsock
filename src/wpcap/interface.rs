@@ -69,7 +69,9 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         let header = PCapPacketHeader {
             len: packet.len() as c_uint,
             caplen: packet.len() as c_uint,
-            ts: unsafe{uninitialized()}
+            ts: unsafe{uninitialized()},
+            #[cfg(any(target_os = "macos", target_os = "ios"))]
+            comment: unsafe{uninitialized()}
         };
 
         let err = unsafe{self.dll.pcap_sendqueue_queue(self.queue, &header, packet.as_ptr())};
