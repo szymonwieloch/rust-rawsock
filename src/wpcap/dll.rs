@@ -5,7 +5,7 @@ This is basicly the equivalent of C language header.
 
 use dlopen::wrapper::WrapperApi;
 use libc::{c_char, c_uint, c_int, c_uchar, c_long, FILE};
-pub use crate::pcap_common::{PCapHandle, PCapPacketHeader, TimeVal, PCapInterface, PCapDumper, PCapHandler, BpfProgram};
+pub use crate::pcap_common::{PCapHandle, PCapPacketHeader, PCapInterface, PCapDumper, PCapHandler, BpfProgram};
 pub use crate::pcap_common::constants::SUCCESS;
 pub use super::structs::PCapStat;
 

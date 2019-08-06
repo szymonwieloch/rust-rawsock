@@ -1,5 +1,5 @@
 use std::ffi::{CStr};
-use libc::{c_char, c_void, c_uint, c_long, c_uchar, c_ushort};
+use libc::{c_char, c_void, c_uint, c_uchar, c_ushort, timeval};
 use std::mem::uninitialized;
 use crate::common::InterfaceDescription;
 use crate::utils::cstr_to_string;
@@ -54,7 +54,7 @@ pub struct PCapInterface {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct PCapPacketHeader {
-    pub ts: TimeVal,
+    pub ts: timeval,
     pub caplen: c_uint,
     pub len: c_uint,
     /*
@@ -63,14 +63,6 @@ pub struct PCapPacketHeader {
     */
     #[cfg(any(target_os = "macos", target_os = "ios"))]
     pub comment: [c_char; 256]
-}
-
-///Equivalent of C struct timeval_t
-#[repr(C)]
-#[derive(Copy, Clone, Debug)]
-pub struct TimeVal {
-    pub tv_sec: c_long,         /* seconds */
-    pub tv_usec: c_long        /* and microseconds */
 }
 
 ///Equivalent of pcap_direction_t

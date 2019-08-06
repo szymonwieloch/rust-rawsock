@@ -12,7 +12,7 @@ pub mod helpers {
     pub use crate::pcap_common::PCapErrBuf;
 }
 
-pub use crate::pcap_common::{PCapHandle, PCapPacketHeader, TimeVal, PCapInterface, PCapHandler, BpfProgram, PCapDirection, PCapDumper};
+pub use crate::pcap_common::{PCapHandle, PCapPacketHeader, PCapInterface, PCapHandler, BpfProgram, PCapDirection, PCapDumper};
 pub use crate::pcap_common::constants::SUCCESS;
 
 
