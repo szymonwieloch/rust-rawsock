@@ -29,6 +29,13 @@ pub trait DynamicInterface<'a>{
     ///Breaks previously started loops.
     fn break_loop(&  self);
 
+    /**
+    Runs infinite loop and passes received packets via callback.
+
+    Exits when the break_loop() function is called or on error.
+    */
+    fn loop_infinite_dyn(&self, callback: & dyn FnMut(&BorrowedPacket)) -> Result<(), Error>;
+
     //TODO
     //loop
     //breakloop

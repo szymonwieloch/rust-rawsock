@@ -93,10 +93,26 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
     fn break_loop(& self) {
         unsafe{self.dll.pfring_breakloop(self.handle)};
     }
+
+    fn loop_infinite_dyn(&self, callback: & dyn FnMut(&BorrowedPacket)) -> Result<(), Error> {
+        let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet_dynamic, transmute(& callback), 0)};
+        if result == SUCCESS {
+            Ok(())
+        } else {
+            Err(self.int_to_err(result))
+        }
+    }
 }
 
-extern "C" fn on_received_packet<F>(h: * const PFRingPacketHeader, p: * const c_uchar, user_bytes: * const c_uchar) where F: FnMut(&BorrowedPacket) {
+extern "C" fn on_received_packet_static<F>(h: * const PFRingPacketHeader, p: * const c_uchar, user_bytes: * const c_uchar) where F: FnMut(&BorrowedPacket) {
     let callback: &mut F = unsafe{transmute(user_bytes)};
+
+    let packet = borrowed_packet_from_header(unsafe{&*h}, p);
+    callback(&packet)
+}
+
+extern "C" fn on_received_packet_dynamic(h: * const PFRingPacketHeader, p: * const c_uchar, user_bytes: * const c_uchar){
+    let callback: &mut & mut dyn FnMut(&BorrowedPacket) = unsafe{transmute(user_bytes)};
 
     let packet = borrowed_packet_from_header(unsafe{&*h}, p);
     callback(&packet)
@@ -104,7 +120,7 @@ extern "C" fn on_received_packet<F>(h: * const PFRingPacketHeader, p: * const c_
 
 impl<'a> traits::StaticInterface<'a> for Interface<'a> {
     fn loop_infinite<F>(& self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket) {
-        let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet::<F>, transmute(& callback), 0)};
+        let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet_static::<F>, transmute(& callback), 0)};
         if result == SUCCESS {
             Ok(())
         } else {

@@ -7,7 +7,7 @@ use libc::{ c_int};
 use std::mem::{uninitialized, transmute};
 use crate::utils::cstr_to_string;
 
-use crate::pcap_common::helpers::{borrowed_packet_from_header, on_received_packet};
+use crate::pcap_common::helpers::{borrowed_packet_from_header, on_received_packet_static, on_received_packet_dynamic};
 use crate::pcap_common::constants::{SUCCESS, PCAP_ERROR_BREAK};
 
 ///pcap version of interface.
@@ -101,12 +101,21 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
     fn break_loop(& self) {
         unsafe{self.dll.pcap_breakloop(self.handle)}
     }
+
+    fn loop_infinite_dyn(&self, callback: & dyn FnMut(&BorrowedPacket)) -> Result<(), Error> {
+        let result = unsafe { self.dll.pcap_loop(self.handle, -1, on_received_packet_dynamic, transmute(&callback)) };
+        if result == SUCCESS || result == PCAP_ERROR_BREAK {
+            Ok(())
+        } else {
+            Err(self.last_error())
+        }
+    }
 }
 
 
 impl<'a> traits::StaticInterface<'a> for Interface<'a> {
     fn loop_infinite<F>(& self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket) {
-        let result = unsafe { self.dll.pcap_loop(self.handle, -1, on_received_packet::<F>, transmute(&callback)) };
+        let result = unsafe { self.dll.pcap_loop(self.handle, -1, on_received_packet_static::<F>, transmute(&callback)) };
         if result == SUCCESS || result == PCAP_ERROR_BREAK {
             Ok(())
         } else {
