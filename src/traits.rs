@@ -67,7 +67,7 @@ pub trait StaticInterface<'a>: DynamicInterface<'a> {
 /// There are several libraries that can be used among different platforms.
 /// For example pcap.so, wpcap.dll or pfring.so.
 /// This trait provides a consistent interface to all of them.
-pub trait Library{
+pub trait Library: Send+Sync{
 
     //const DEFAULT_PATHS: &'static [&'static str];
 
