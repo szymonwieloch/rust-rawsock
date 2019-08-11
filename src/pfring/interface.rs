@@ -97,7 +97,7 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
     }
 
     fn loop_infinite_dyn(&self, callback: & dyn FnMut(&BorrowedPacket)) -> Result<(), Error> {
-        let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet_dynamic, transmute(& callback), 0)};
+        let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet_dynamic, transmute(& callback), 1)};
         // This is super strange but although pfring_loop specification states that this function
         // should only return 0, it also returns 1. It happens when it finishes successfully after
         // a pfring_breakloop() call.
@@ -125,7 +125,7 @@ extern "C" fn on_received_packet_dynamic(h: * const PFRingPacketHeader, p: * con
 
 impl<'a> traits::StaticInterface<'a> for Interface<'a> {
     fn loop_infinite<F>(& self, callback: F) -> Result<(), Error> where F: FnMut(&BorrowedPacket) {
-        let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet_static::<F>, transmute(& callback), 0)};
+        let result = unsafe{self.dll.pfring_loop(self.handle, on_received_packet_static::<F>, transmute(& callback), 1)};
         if result == SUCCESS {
             Ok(())
         } else {
