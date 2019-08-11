@@ -10,6 +10,7 @@ use std::ptr::null;
 use crate::common::InterfaceDescription;
 use crate::pcap_common::interface_data_from_pcap_list;
 use crate::utils::cstr_to_string;
+use std::sync::Arc;
 
 
 ///Instance of a opened wpcap library.
@@ -52,6 +53,13 @@ impl traits::Library for Library {
 
         unsafe { self.dll.pcap_freealldevs(interfs) }
         Ok(interf_datas)
+    }
+
+    fn open_interface_arc<'a>(&'a self, name: &str) -> Result<Arc<traits::DynamicInterface<'a> +'a>, Error> {
+        match Interface::new(name, &self.dll) {
+            Ok(interf) => Ok(Arc::new(interf) as Arc<traits::DynamicInterface>),
+            Err(e) => Err(e)
+        }
     }
 }
 

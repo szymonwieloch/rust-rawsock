@@ -6,6 +6,7 @@ mod err;
 
 use crate::traits::Library;
 use crate::{wpcap, pcap, pfring};
+use std::sync::Arc;
 
 
 pub use self::lib_version::LibraryVersion;
@@ -41,6 +42,20 @@ pub fn open_best_library() -> Result<Box<dyn Library>, Error> {
     }
     match pcap::Library::open_default_paths() {
         Ok(l) => Ok(Box::new(l)),
+        Err(e) => Err(e)
+    }
+}
+
+/// Multi-thread version of open_best_library()
+pub fn open_best_library_arc() -> Result<Arc<dyn Library>, Error> {
+    if let Ok(l) = pfring::Library::open_default_paths() {
+        return Ok(Arc::new(l));
+    }
+    if let Ok(l) = wpcap::Library::open_default_paths() {
+        return Ok(Arc::new(l));
+    }
+    match pcap::Library::open_default_paths() {
+        Ok(l) => Ok(Arc::new(l)),
         Err(e) => Err(e)
     }
 }

@@ -17,6 +17,9 @@ pub struct Interface<'a> {
     datalink: DataLink
 }
 
+unsafe impl<'a> Sync for Interface<'a> {}
+unsafe impl<'a> Send for Interface<'a> {}
+
 
 impl<'a> Interface<'a> {
     pub fn new(name: &str, dll: &'a PCapDll) ->Result<Self, Error> {

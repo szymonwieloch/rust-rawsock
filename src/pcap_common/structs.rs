@@ -9,6 +9,7 @@ use super::constants::ERRBUF_SIZE;
 ///Raw PCap handle - created only to allow construction of pointers.
 pub enum PCapHandle {}
 
+
 ///Raw PCap duper handle - created only to allow construction of pointers.
 pub enum PCapDumper {}
 

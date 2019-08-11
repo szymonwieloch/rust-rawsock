@@ -1,5 +1,5 @@
 /**
-    Static dispatch in a loop wih break on demand.
+    Static and dynamic dispatch in a loop wih break on demand.
 */
 
 extern crate rawsock;
@@ -9,8 +9,8 @@ mod commons;
 use self::commons::{open_library};
 
 fn main() {
-   static_loop();
     dynamic_loop();
+    static_loop();
 }
 
 fn static_loop(){

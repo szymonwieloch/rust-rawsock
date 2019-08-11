@@ -5,6 +5,7 @@ use crate::Error;
 use super::dll::PFRingDll;
 use super::paths::DEFAULT_PATHS;
 use crate::utils::cstr_to_string;
+use std::sync::Arc;
 
 
 ///Instance of a opened pfring library.
@@ -31,6 +32,13 @@ impl traits::Library for Library {
     fn open_interface<'a>(&'a self, name: &str) -> Result<Box<traits::DynamicInterface<'a> +'a>, Error> {
         match self.open_interface(name){
             Ok(interf) => Ok(Box::new(interf) as Box<traits::DynamicInterface>),
+            Err(e) => Err(e)
+        }
+    }
+
+    fn open_interface_arc<'a>(&'a self, name: &str) -> Result<Arc<traits::DynamicInterface<'a> + 'a>, Error> {
+        match Interface::new(name, &self.dll){
+            Ok(interf) => Ok(Arc::new(interf) as Arc<traits::DynamicInterface>),
             Err(e) => Err(e)
         }
     }

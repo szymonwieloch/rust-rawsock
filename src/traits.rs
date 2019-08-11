@@ -4,12 +4,13 @@ Common traits for all libraries.
 
 use crate::{BorrowedPacket, DataLink, LibraryVersion, Error, InterfaceDescription, Stats};
 use std::iter::IntoIterator;
+use std::sync::Arc;
 
 
 ///Trait for structures representing an opened interface (or network card or network device)
 ///
 /// Interfaces are opened using a concrete library - check the Library trait.
-pub trait DynamicInterface<'a>{
+pub trait DynamicInterface<'a>: Send + Sync{
 
     ///Sends a raw packet.
     fn send(&self, packet: &[u8]) -> Result<(), Error>;
@@ -98,6 +99,8 @@ pub trait Library: Send+Sync{
     ///
     /// You can obtain names of available devices by calling the all_interfaces() function.
     fn open_interface<'a>(&'a self, name: &str) -> Result<Box<dyn DynamicInterface<'a>+'a>, Error>;
+
+    fn open_interface_arc<'a>(&'a self, name: &str) -> Result<Arc<DynamicInterface<'a> + 'a>, Error>;
 
     /**
     Obtains list of available network interfaces.
