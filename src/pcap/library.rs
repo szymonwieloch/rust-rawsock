@@ -33,9 +33,9 @@ impl traits::Library for Library {
         })
     }
 
-    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<traits::DynamicInterface<'a> +'a>, Error> {
+    fn open_interface<'a>(&'a self, name: &str) -> Result<Box<dyn traits::DynamicInterface<'a> +'a>, Error> {
         match self.open_interface(name){
-            Ok(interf) => Ok(Box::new(interf) as Box<traits::DynamicInterface>),
+            Ok(interf) => Ok(Box::new(interf) as Box<dyn traits::DynamicInterface>),
             Err(e) => Err(e)
         }
     }
@@ -56,9 +56,9 @@ impl traits::Library for Library {
         Ok(interf_datas)
     }
 
-    fn open_interface_arc<'a>(&'a self, name: &str) -> Result<Arc<traits::DynamicInterface<'a> + 'a>, Error> {
+    fn open_interface_arc<'a>(&'a self, name: &str) -> Result<Arc<dyn traits::DynamicInterface<'a> + 'a>, Error> {
         match Interface::new(name, &self.dll){
-            Ok(interf) => Ok(Arc::new(interf) as Arc<traits::DynamicInterface>),
+            Ok(interf) => Ok(Arc::new(interf) as Arc<dyn traits::DynamicInterface>),
             Err(e) => Err(e)
         }
     }

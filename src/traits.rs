@@ -100,7 +100,7 @@ pub trait Library: Send+Sync{
     /// You can obtain names of available devices by calling the all_interfaces() function.
     fn open_interface<'a>(&'a self, name: &str) -> Result<Box<dyn DynamicInterface<'a>+'a>, Error>;
 
-    fn open_interface_arc<'a>(&'a self, name: &str) -> Result<Arc<DynamicInterface<'a> + 'a>, Error>;
+    fn open_interface_arc<'a>(&'a self, name: &str) -> Result<Arc<dyn DynamicInterface<'a> + 'a>, Error>;
 
     /**
     Obtains list of available network interfaces.
