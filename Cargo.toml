@@ -42,3 +42,6 @@ name = "loop"
 
 [[example]]
 name = "thread_loop"
+
+[[example]]
+name = "filter"
