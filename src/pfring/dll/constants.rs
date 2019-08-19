@@ -1,7 +1,7 @@
 use libc::c_int;
 
-/// Equivalent of pfring macros with constants.
 bitflags! {
+    /// Equivalent of pfring macros with constants.
     pub struct PFRingFlags: c_int {
         const ZC_SYMMETRIC_RSS          = 1 << 0;
         const DNA_SYMMETRIC_RSS         = Self::ZC_SYMMETRIC_RSS.bits;
