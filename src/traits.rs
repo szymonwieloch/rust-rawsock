@@ -37,9 +37,10 @@ pub trait DynamicInterface<'a>: Send + Sync{
     */
     fn loop_infinite_dyn(&self, callback: & dyn FnMut(&BorrowedPacket)) -> Result<(), Error>;
 
+    ///Set bpf filter.
+    fn set_filter(&mut self, filter: &str) -> Result<(), Error>;
+
     //TODO
-    //loop
-    //breakloop
     //bpf filters
     //receive/send with timeout
 

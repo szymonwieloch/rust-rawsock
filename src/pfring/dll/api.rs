@@ -47,6 +47,7 @@ pub struct PFRingDll{
     pfring_purge_idle_rules: unsafe extern "C" fn (ring: PFRing, inactivity_sec: u16) -> c_int,
     pfring_get_filtering_rule_stats: unsafe extern "C" fn(ring: * mut PFRing, rule_id: u16, stats: * mut char, stats_len: * mut c_uint) -> c_int,
     pfring_toggle_filtering_policy: unsafe extern "C" fn (ring: * mut PFRing, rules_default_accept_policy: u8)-> c_int,
+    pfring_set_bpf_filter: unsafe extern "C" fn(ring: *mut PFRing, filter_buffer: *mut c_char) -> c_int,
     pfring_remove_bpf_filter: unsafe extern "C" fn (ring: * mut PFRing) -> c_int,
 
     // the following functions require making pfring-sys compilable

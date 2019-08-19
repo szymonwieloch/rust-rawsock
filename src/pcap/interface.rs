@@ -9,12 +9,14 @@ use crate::utils::cstr_to_string;
 
 use crate::pcap_common::helpers::{borrowed_packet_from_header, on_received_packet_static, on_received_packet_dynamic};
 use crate::pcap_common::constants::{SUCCESS, PCAP_ERROR_BREAK};
+use crate::pcap_common::BpfProgram;
 
 ///pcap version of interface.
 pub struct Interface<'a> {
     handle: * const PCapHandle,
     dll: & 'a PCapDll,
-    datalink: DataLink
+    datalink: DataLink,
+    bpf_filter: Option<BpfProgram>,
 }
 
 unsafe impl<'a> Sync for Interface<'a> {}
@@ -44,7 +46,8 @@ impl<'a> Interface<'a> {
         Ok(Interface {
             dll,
             handle,
-            datalink
+            datalink,
+            bpf_filter: None,
         })
     }
 
@@ -52,11 +55,20 @@ impl<'a> Interface<'a> {
         let cerr = unsafe{self.dll.pcap_geterr(self.handle)};
         Error::LibraryError(cstr_to_string(cerr))
     }
+
+    fn drop_filter(&mut self) {
+        if let Some(mut bpf_filter) = self.bpf_filter.take() {
+            unsafe { self.dll.pcap_freecode(&mut bpf_filter) }
+        }
+    }
 }
 
 impl<'a> Drop for Interface<'a> {
     fn drop(&mut self) {
-        unsafe { self.dll.pcap_close(self.handle) }
+        unsafe {
+            self.dll.pcap_close(self.handle);
+            self.drop_filter();
+        }
     }
 }
 
@@ -108,6 +120,23 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
     fn loop_infinite_dyn(&self, callback: & dyn FnMut(&BorrowedPacket)) -> Result<(), Error> {
         let result = unsafe { self.dll.pcap_loop(self.handle, -1, on_received_packet_dynamic, transmute(&callback)) };
         if result == SUCCESS || result == PCAP_ERROR_BREAK {
+            Ok(())
+        } else {
+            Err(self.last_error())
+        }
+    }
+
+    fn set_filter(&mut self, filter: &str) -> Result<(), Error> {
+        let mut bpf_filter: BpfProgram = unsafe {uninitialized()};
+        let filter = CString::new(filter)?;
+        let result = unsafe { self.dll.pcap_compile(self.handle, &mut bpf_filter, filter.as_ptr(), 1, 0) };
+        if result != SUCCESS {
+            return Err(self.last_error())
+        }
+        let result = unsafe { self.dll.pcap_setfilter(self.handle, &mut bpf_filter) };
+        self.drop_filter();
+        self.bpf_filter = Some(bpf_filter);
+        if result == SUCCESS {
             Ok(())
         } else {
             Err(self.last_error())
