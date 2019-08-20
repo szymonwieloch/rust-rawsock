@@ -1,5 +1,5 @@
 use crate::{BorrowedPacket, DataLink, traits, Stats};
-use super::dll::{PFRing, PFRingDll, PFRingPacketHeader, PFRingStat, PFRingBpfProgram, SUCCESS};
+use super::dll::{PFRing, PFRingDll, PFRingPacketHeader, PFRingStat, SUCCESS};
 use crate::Error;
 use dlopen::wrapper::Container;
 use std::ffi::CString;
@@ -13,7 +13,6 @@ use std::mem::transmute;
 pub struct Interface<'a> {
     handle: * mut PFRing,
     dll: & 'a Container<PFRingDll>,
-    bpf_filter: PFRingBpfProgram,
 }
 
 unsafe impl<'a> Sync for Interface<'a> {}
@@ -37,7 +36,6 @@ impl<'a> Interface<'a>{
         Ok(Self{
             handle,
             dll,
-            bpf_filter: unsafe { uninitialized() },
         })
     }
 
