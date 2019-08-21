@@ -117,6 +117,15 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
             Err(self.int_to_err(result))
         }
     }
+
+    fn remove_filter(&mut self) -> Result<(), Error> {
+        let result = unsafe { self.dll.pfring_remove_bpf_filter(self.handle) };
+        if result == SUCCESS {
+            Ok(())
+        } else {
+            Err(self.int_to_err(result))
+        }
+    }
 }
 
 extern "C" fn on_received_packet_static<F>(h: * const PFRingPacketHeader, p: * const c_uchar, user_bytes: * const c_uchar) where F: FnMut(&BorrowedPacket) {

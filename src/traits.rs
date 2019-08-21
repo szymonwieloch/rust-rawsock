@@ -47,6 +47,9 @@ pub trait DynamicInterface<'a>: Send + Sync{
     ///Set bpf filter.
     fn set_filter_cstr(&mut self, filter: &CStr) -> Result<(), Error>;
 
+    ///Remove bpf filter.
+    fn remove_filter(&mut self) -> Result<(), Error>;
+
     //TODO
     //bpf filters
     //receive/send with timeout

@@ -8,7 +8,7 @@ use std::mem::{uninitialized, transmute};
 use crate::utils::cstr_to_string;
 
 use crate::pcap_common::helpers::{borrowed_packet_from_header, on_received_packet_static, on_received_packet_dynamic};
-use crate::pcap_common::constants::{SUCCESS, PCAP_ERROR_BREAK};
+use crate::pcap_common::constants::{SUCCESS, PCAP_ERROR_BREAK, PCAP_EMPTY_FILTER_STR};
 use crate::pcap_common::BpfProgram;
 
 ///pcap version of interface.
@@ -130,6 +130,12 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         } else {
             Err(self.last_error())
         }
+    }
+
+    fn remove_filter(&mut self) -> Result<(), Error> {
+        self.set_filter_cstr(unsafe {
+            CStr::from_bytes_with_nul_unchecked(PCAP_EMPTY_FILTER_STR)
+        })
     }
 }
 
