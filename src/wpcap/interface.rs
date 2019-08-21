@@ -7,7 +7,8 @@ use std::mem::{uninitialized, transmute};
 use super::structs::PCapStat;
 use crate::utils::cstr_to_string;
 use crate::pcap_common::helpers::{borrowed_packet_from_header, on_received_packet_static, on_received_packet_dynamic};
-use crate::pcap_common::constants::{SUCCESS, PCAP_ERROR_BREAK};
+use crate::pcap_common::constants::{SUCCESS, PCAP_ERROR_BREAK, PCAP_EMPTY_FILTER_STR};
+use crate::pcap_common::BpfProgram;
 
 const QUEUE_SIZE: usize = 65536 * 8; //min 8 packets
 
@@ -16,7 +17,7 @@ pub struct Interface<'a> {
     handle: * const PCapHandle,
     dll: & 'a WPCapDll,
     datalink: DataLink,
-    queue: * mut PCapSendQueue
+    queue: * mut PCapSendQueue,
 }
 
 unsafe impl<'a> Sync for Interface<'a> {}
@@ -49,7 +50,7 @@ impl<'a> Interface<'a> {
             dll,
             queue,
             handle,
-            datalink
+            datalink,
         })
     }
 
@@ -63,7 +64,7 @@ impl<'a> Drop for Interface<'a> {
     fn drop(&mut self) {
         unsafe {
             self.dll.pcap_sendqueue_destroy(self.queue);
-            self.dll.pcap_close(self.handle)
+            self.dll.pcap_close(self.handle);
         }
     }
 }
@@ -143,6 +144,27 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         } else {
             Err(self.last_error())
         }
+    }
+
+    fn set_filter_cstr(&mut self, filter: &CStr) -> Result<(), Error> {
+        let mut bpf_filter: BpfProgram = unsafe {uninitialized()};
+        let result = unsafe { self.dll.pcap_compile(self.handle, &mut bpf_filter, filter.as_ptr(), 1, 0) };
+        if result != SUCCESS {
+            return Err(self.last_error())
+        }
+        let result = unsafe { self.dll.pcap_setfilter(self.handle, &mut bpf_filter) };
+        unsafe { self.dll.pcap_freecode(&mut bpf_filter) };
+        if result == SUCCESS {
+            Ok(())
+        } else {
+            Err(self.last_error())
+        }
+    }
+
+    fn remove_filter(&mut self) -> Result<(), Error> {
+        self.set_filter_cstr(unsafe {
+            CStr::from_bytes_with_nul_unchecked(PCAP_EMPTY_FILTER_STR)
+        })
     }
 }
 

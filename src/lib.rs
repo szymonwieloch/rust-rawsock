@@ -76,6 +76,8 @@ extern crate dlopen_derive;
 extern crate bitflags;
 extern crate libc;
 extern crate time;
+#[macro_use]
+extern crate lazy_static;
 
 pub mod pcap;
 pub mod wpcap;

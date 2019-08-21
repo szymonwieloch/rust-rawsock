@@ -2,7 +2,7 @@ use crate::{BorrowedPacket, DataLink, traits, Stats};
 use super::dll::{PFRing, PFRingDll, PFRingPacketHeader, PFRingStat, SUCCESS};
 use crate::Error;
 use dlopen::wrapper::Container;
-use std::ffi::CString;
+use std::ffi::{CString, CStr};
 use std::mem::uninitialized;
 use libc::{c_uint, c_int, c_uchar};
 use crate::utils::string_from_errno;
@@ -34,7 +34,8 @@ impl<'a> Interface<'a>{
         }
 
         Ok(Self{
-            handle, dll
+            handle,
+            dll,
         })
     }
 
@@ -102,6 +103,24 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         // should only return 0, it also returns 1. It happens when it finishes successfully after
         // a pfring_breakloop() call.
         if result == SUCCESS || result == 1 {
+            Ok(())
+        } else {
+            Err(self.int_to_err(result))
+        }
+    }
+
+    fn set_filter_cstr(&mut self, filter: &CStr) -> Result<(), Error> {
+        let result = unsafe { self.dll.pfring_set_bpf_filter(self.handle, filter.as_ptr() as *mut i8) };
+        if result == SUCCESS {
+            Ok(())
+        } else {
+            Err(self.int_to_err(result))
+        }
+    }
+
+    fn remove_filter(&mut self) -> Result<(), Error> {
+        let result = unsafe { self.dll.pfring_remove_bpf_filter(self.handle) };
+        if result == SUCCESS {
             Ok(())
         } else {
             Err(self.int_to_err(result))

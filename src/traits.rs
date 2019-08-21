@@ -5,6 +5,7 @@ Common traits for all libraries.
 use crate::{BorrowedPacket, DataLink, LibraryVersion, Error, InterfaceDescription, Stats};
 use std::iter::IntoIterator;
 use std::sync::Arc;
+use std::ffi::{CStr, CString};
 
 
 ///Trait for structures representing an opened interface (or network card or network device)
@@ -37,9 +38,19 @@ pub trait DynamicInterface<'a>: Send + Sync{
     */
     fn loop_infinite_dyn(&self, callback: & dyn FnMut(&BorrowedPacket)) -> Result<(), Error>;
 
+    ///Set bpf filter.
+    fn set_filter(&mut self, filter: &str) -> Result<(), Error> {
+        let filter = CString::new(filter)?;
+        self.set_filter_cstr(&filter)
+    }
+
+    ///Set bpf filter.
+    fn set_filter_cstr(&mut self, filter: &CStr) -> Result<(), Error>;
+
+    ///Remove bpf filter.
+    fn remove_filter(&mut self) -> Result<(), Error>;
+
     //TODO
-    //loop
-    //breakloop
     //bpf filters
     //receive/send with timeout
 

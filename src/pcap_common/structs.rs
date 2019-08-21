@@ -91,6 +91,7 @@ pub fn interface_data_from_pcap_list(interfs: * const PCapInterface) -> Vec<Inte
 }
 
 /// Equivalent of the bpf_insn C struct
+#[repr(C)]
 pub struct BpfInsn {
     pub code: c_ushort,
     pub jt: c_uchar,
@@ -99,6 +100,7 @@ pub struct BpfInsn {
 }
 
 ///Equivalent of the bpf_program C struct
+#[repr(C)]
 pub struct BpfProgram {
     pub bf_len: c_uint,
     pub bf_insns: *mut BpfInsn,

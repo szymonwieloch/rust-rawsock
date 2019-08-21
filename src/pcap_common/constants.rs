@@ -18,3 +18,4 @@ pub const PCAP_ERROR_CANTSET_TSTAMP_TYPE: c_int = -10;
 pub const PCAP_ERROR_PROMISC_PERM_DENIED: c_int = -11;
 pub const PCAP_ERROR_TSTAMP_PRECISION_NOTSUP: c_int = -12;
 
+pub const PCAP_EMPTY_FILTER_STR: &'static [u8; 1] = b"\0";
