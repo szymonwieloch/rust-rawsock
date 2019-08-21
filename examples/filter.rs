@@ -5,7 +5,6 @@
 extern crate rawsock;
 mod commons;
 use rawsock::{open_best_library, DataLink};
-use self::commons::ICMP_PACKET;
 
 fn main() {
     println!("Opening packet capturing library");
@@ -23,13 +22,7 @@ fn main() {
         return
     }
 
-    interf.set_filter("ether dst 45:00:00:54:ee:96").expect("Could not set filter");
-    //send some packets
-    println!("Sending 5 packets:");
-    for i in 0..5{
-        println!("Sending ICMP ping packet no {}",i);
-        interf.send(&ICMP_PACKET).expect("Could not send packet");
-    }
+    interf.set_filter("icmp").expect("Could not set filter");
 
     //receive some packets.
     println!("Receiving 5 packets:");
