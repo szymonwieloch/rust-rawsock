@@ -155,9 +155,8 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         }
     }
 
-    fn set_filter(&mut self, filter: &str) -> Result<(), Error> {
+    fn set_filter_cstr(&mut self, filter: &CStr) -> Result<(), Error> {
         let mut bpf_filter: BpfProgram = unsafe {uninitialized()};
-        let filter = CString::new(filter)?;
         let result = unsafe { self.dll.pcap_compile(self.handle, &mut bpf_filter, filter.as_ptr(), 1, 0) };
         if result != SUCCESS {
             return Err(self.last_error())
