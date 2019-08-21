@@ -18,7 +18,6 @@ pub struct Interface<'a> {
     dll: & 'a WPCapDll,
     datalink: DataLink,
     queue: * mut PCapSendQueue,
-    bpf_filter: Option<BpfProgram>,
 }
 
 unsafe impl<'a> Sync for Interface<'a> {}
@@ -52,19 +51,12 @@ impl<'a> Interface<'a> {
             queue,
             handle,
             datalink,
-            bpf_filter: None,
         })
     }
 
     fn last_error(&self) -> Error {
         let cerr = unsafe{self.dll.pcap_geterr(self.handle)};
         Error::LibraryError(cstr_to_string(cerr))
-    }
-
-    fn drop_filter(&mut self) {
-        if let Some(mut bpf_filter) = self.bpf_filter.take() {
-            unsafe { self.dll.pcap_freecode(&mut bpf_filter) }
-        }
     }
 }
 
@@ -73,7 +65,6 @@ impl<'a> Drop for Interface<'a> {
         unsafe {
             self.dll.pcap_sendqueue_destroy(self.queue);
             self.dll.pcap_close(self.handle);
-            self.drop_filter();
         }
     }
 }
@@ -162,8 +153,7 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
             return Err(self.last_error())
         }
         let result = unsafe { self.dll.pcap_setfilter(self.handle, &mut bpf_filter) };
-        self.drop_filter();
-        self.bpf_filter = Some(bpf_filter);
+        unsafe { self.dll.pcap_freecode(&mut bpf_filter) };
         if result == SUCCESS {
             Ok(())
         } else {
