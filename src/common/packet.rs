@@ -1,5 +1,5 @@
 use time::Timespec;
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 use std::fmt::{Display, Formatter, Error as FmtError, LowerHex};
 
 ///Trait for obtained packets - common part between borrowed and owned versions.
@@ -77,6 +77,13 @@ impl Deref for OwnedPacket {
 
     fn deref(&self) -> &Self::Target {
         &self.packet
+    }
+}
+
+impl DerefMut for OwnedPacket {
+
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.packet
     }
 }
 
