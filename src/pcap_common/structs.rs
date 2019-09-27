@@ -116,7 +116,7 @@ pub fn address_data_from_interface(mut addr_ptr: * const PCapAddr) -> Vec<Addres
         ret.push(AddressDescription {
             address: ipaddr_from_sockaddr_ptr(addr.addr),
             netmask: ipaddr_from_sockaddr_ptr(addr.netmask),
-            broadcase_address: ipaddr_from_sockaddr_ptr(addr.broadaddr),
+            broadcast_address: ipaddr_from_sockaddr_ptr(addr.broadaddr),
             dest_address: ipaddr_from_sockaddr_ptr(addr.dstaddr),
         });
         addr_ptr = addr.next;

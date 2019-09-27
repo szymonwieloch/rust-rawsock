@@ -6,7 +6,7 @@ use std::fmt::{Display, Formatter, Error as FmtError};
 pub struct AddressDescription {
     pub address: Option<SocketAddr>,
     pub netmask: Option<SocketAddr>,
-    pub broadcase_address: Option<SocketAddr>,
+    pub broadcast_address: Option<SocketAddr>,
     pub dest_address: Option<SocketAddr>,
 }
 
