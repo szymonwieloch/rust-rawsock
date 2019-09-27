@@ -11,7 +11,7 @@ use std::sync::Arc;
 
 pub use self::lib_version::LibraryVersion;
 pub use self::packet::{Packet, OwnedPacket, BorrowedPacket};
-pub use self::interf_desc::InterfaceDescription;
+pub use self::interf_desc::{InterfaceDescription, AddressDescription};
 pub use self::data_link::DataLink;
 pub use self::err::Error;
 
