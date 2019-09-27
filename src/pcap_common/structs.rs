@@ -98,12 +98,12 @@ fn ipaddr_from_sockaddr_ptr (ptr: * const sockaddr) -> Option<SocketAddr> {
             AF_INET => {
                 let ptr = ptr as * const sockaddr_in;
                 let addr = unsafe {*ptr};
-                Some(SocketAddrV4::new(addr.sin_addr.s_addr.into(), addr.sin_port).into())
+                Some(SocketAddrV4::new(u32::from_be(addr.sin_addr.s_addr).into(), u16::from_be(addr.sin_port).into()).into())
             },
             AF_INET6 => {
                 let ptr = ptr as * const sockaddr_in6;
                 let addr = unsafe {*ptr};
-                Some(SocketAddrV6::new(addr.sin6_addr.s6_addr.into(), addr.sin6_port, addr.sin6_flowinfo, addr.sin6_scope_id).into())
+                Some(SocketAddrV6::new(addr.sin6_addr.s6_addr.into(), u16::from_be(addr.sin6_port), addr.sin6_flowinfo, addr.sin6_scope_id).into())
             },
             _ => None,
         }
