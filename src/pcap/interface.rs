@@ -1,6 +1,6 @@
 use std::ffi::{CStr, CString};
 use crate::{Error,  BorrowedPacket, DataLink, traits, Stats};
-use super::dll::{PCapHandle, PCapDll, PCapPacketHeader};
+use super::dll::{PCapHandle, PCapDll, PCapPacketHeader, PCapDirection};
 use super::dll::helpers::PCapErrBuf;
 use super::structs::PCapStat;
 use libc::{ c_int};
@@ -14,6 +14,12 @@ use crate::pcap_common::BpfProgram;
 
 lazy_static! {
 	static ref COMPILE_GUARD : Mutex<()> = Mutex::new(());
+}
+
+pub enum Direction {
+    In,
+    Out,
+    InOut,
 }
 
 ///pcap version of interface.
@@ -57,6 +63,18 @@ impl<'a> Interface<'a> {
     fn last_error(&self) -> Error {
         let cerr = unsafe{self.dll.pcap_geterr(self.handle)};
         Error::LibraryError(cstr_to_string(cerr))
+    }
+
+    pub fn set_direction(&self, direction: Direction) -> Result<(), Error> {
+        if unsafe{self.dll.pcap_setdirection(self.handle, match direction{
+            Direction::In => PCapDirection::In,
+            Direction::Out => PCapDirection::Out,
+            Direction::InOut => PCapDirection::InOut,
+        })} == SUCCESS {
+            Ok(())
+        } else {
+            Err(self.last_error())
+        }
     }
 }
 
