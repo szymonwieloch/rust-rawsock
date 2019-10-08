@@ -1,7 +1,8 @@
 use std::ffi::{CStr};
-use libc::{c_char, c_void, c_uint, c_uchar, c_ushort, timeval};
+use std::net::{SocketAddr, SocketAddrV4, SocketAddrV6};
+use libc::{c_char, c_void, c_uint, c_uchar, c_ushort, timeval, sockaddr, sockaddr_in, sockaddr_in6};
 use std::mem::uninitialized;
-use crate::common::InterfaceDescription;
+use crate::common::{InterfaceDescription, AddressDescription};
 use crate::utils::cstr_to_string;
 use super::constants::ERRBUF_SIZE;
 
@@ -47,7 +48,7 @@ pub struct PCapInterface {
     pub next: * const PCapInterface,
     pub name: * const c_char, /* name to hand to "pcap_open_live()" */
     pub description: * const c_char,	/* textual description of interface, or NULL */
-    pub addresses: * const c_void,
+    pub addresses: * const PCapAddr,
     pub flags: c_uint	/* PCAP_IF_ interface flags */
 }
 
@@ -76,13 +77,61 @@ pub enum PCapDirection {
 
 pub type PCapHandler=extern "C" fn(user: * mut c_uchar, h: * const PCapPacketHeader, bytes: * const c_uchar);
 
+#[repr(C)]
+pub struct PCapAddr {
+    pub next: * const PCapAddr,
+    pub addr: * const sockaddr,
+    pub netmask: * const sockaddr,
+    pub broadaddr: * const sockaddr,
+    pub dstaddr: * const sockaddr,
+}
+
+const AF_INET: u16 = 2;
+const AF_INET6: u16 = 10;
+
+fn ipaddr_from_sockaddr_ptr (ptr: * const sockaddr) -> Option<SocketAddr> {
+    if ptr.is_null() {
+        None
+    } else {
+        let sa_family = unsafe {(*ptr).sa_family};
+        match sa_family {
+            AF_INET => {
+                let ptr = ptr as * const sockaddr_in;
+                let addr = unsafe {*ptr};
+                Some(SocketAddrV4::new(u32::from_be(addr.sin_addr.s_addr).into(), u16::from_be(addr.sin_port).into()).into())
+            },
+            AF_INET6 => {
+                let ptr = ptr as * const sockaddr_in6;
+                let addr = unsafe {*ptr};
+                Some(SocketAddrV6::new(addr.sin6_addr.s6_addr.into(), u16::from_be(addr.sin6_port), addr.sin6_flowinfo, addr.sin6_scope_id).into())
+            },
+            _ => None,
+        }
+    }
+}
+
+pub fn address_data_from_interface(mut addr_ptr: * const PCapAddr) -> Vec<AddressDescription> {
+    let mut ret = vec![];
+    while let Some(addr) = unsafe {addr_ptr.as_ref()} {
+        ret.push(AddressDescription {
+            address: ipaddr_from_sockaddr_ptr(addr.addr),
+            netmask: ipaddr_from_sockaddr_ptr(addr.netmask),
+            broadcast_address: ipaddr_from_sockaddr_ptr(addr.broadaddr),
+            dest_address: ipaddr_from_sockaddr_ptr(addr.dstaddr),
+        });
+        addr_ptr = addr.next;
+    }
+    ret
+}
+
 pub fn interface_data_from_pcap_list(interfs: * const PCapInterface) -> Vec<InterfaceDescription> {
     let mut interfs_descr = Vec::new();
     let mut curr = interfs;
     while !curr.is_null() {
         let id = InterfaceDescription {
             name: cstr_to_string(unsafe{(*curr).name}),
-            description: cstr_to_string(unsafe{(*curr).description})
+            description: cstr_to_string(unsafe{(*curr).description}),
+            addresses: Some(address_data_from_interface(unsafe{(*curr).addresses}))
         };
         interfs_descr.push(id);
         curr = unsafe{(*curr).next};

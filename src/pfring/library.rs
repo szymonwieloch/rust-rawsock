@@ -53,7 +53,8 @@ impl traits::Library for Library {
             let sn = cstr_to_string(unsafe{(*curr).sn});
             let id = InterfaceDescription{
                 name: cstr_to_string(unsafe{(*curr).name}),
-                description: format!("{}, {}, {}", &system_name, &module, &sn)
+                description: format!("{}, {}, {}", &system_name, &module, &sn),
+                addresses: None
             };
             result.push(id);
             curr=unsafe{(*curr).next};
