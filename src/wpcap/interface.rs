@@ -83,7 +83,10 @@ impl<'a> traits::DynamicInterface<'a> for Interface<'a> {
         if err != 0 {
             self.flush();
             let err = unsafe {self.dll.pcap_sendqueue_queue(self.queue, &header, packet.as_ptr())};
-            assert_eq!(err,0);
+            // assert_eq!(err,0);
+            if err != 0 {
+                return Err(Error::SendingPacket(format!("Unknown Error: {}", err)));
+            }
         }
 
         if unsafe {self.dll.pcap_sendpacket(self.handle, packet.as_ptr(), packet.len() as c_int)} == SUCCESS {
